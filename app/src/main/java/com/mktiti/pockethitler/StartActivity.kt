@@ -11,11 +11,11 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.linearLayout
 import org.jetbrains.anko.singleTop
 
-private const val PLAYERS_KEY = "players"
+private const val PLAYERS_KEY = "selectablePlayers"
 
 class StartActivity : AppCompatActivity() {
 
-    //private val players = mutableListOf<String>()
+    //private val selectablePlayers = mutableListOf<String>()
     private val players = (0 .. 7).map { "Player #$it" }
 
     override fun onCreate(savedInstanceState: Bundle?) {

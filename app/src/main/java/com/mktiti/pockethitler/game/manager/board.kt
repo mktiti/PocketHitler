@@ -80,6 +80,13 @@ class Boards(numberOfPlayers: Int, fascistCards: Int = 0, liberalCards: Int = 0)
             liberalBoard.count
         )
 
+    val finished: Article?
+        get() = when {
+            liberalBoard.isCompleted -> Article.LIBERAL
+            fascistBoard.isCompleted -> Article.FASCIST
+            else -> null
+        }
+
     val inRedZone: Boolean
         get() = fascistBoard.inRedZone
 

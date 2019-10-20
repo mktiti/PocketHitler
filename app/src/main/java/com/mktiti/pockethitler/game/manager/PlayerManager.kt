@@ -8,20 +8,15 @@ import com.mktiti.pockethitler.game.data.PlayerIdentity.LIBERAL
 import com.mktiti.pockethitler.game.data.PlayerIdentity.FASCIST
 import com.mktiti.pockethitler.game.data.PlayerIdentity.HITLER
 
-class PlayerManager(players: List<PlayerData>, var currentPresidentCandidate: Player) {
+class PlayerManager(players: List<PlayerData>) {
 
     private val allPlayers:  MutableList<PlayerData> = players.toMutableList()
-    private val allFascists: List<PlayerData> = allPlayers.filter { it.player.identity != LIBERAL }
-    private val allLiberals: List<PlayerData> = allPlayers.filter { it.player.identity == LIBERAL }
 
-    var lastGovernment: Government? = null
-        private set
+    val livingPlayers: List<Player>
+        get() = allPlayers.filter { it.alive }.map(PlayerData::player)
 
     val state: PlayersState
-        get() = PlayersState(
-            allPlayers,
-            currentPresidentCandidate
-        )
+        get() = PlayersState(allPlayers)
 
     val playerCount: Int
         get() = allPlayers.size
@@ -54,14 +49,11 @@ class PlayerManager(players: List<PlayerData>, var currentPresidentCandidate: Pl
                                     )
                                 }
 
-            return PlayersState(
-                allPlayers,
-                allPlayers.random().player
-            )
+            return PlayersState(allPlayers)
         }
     }
 
-    constructor(playersState: PlayersState) : this(playersState.players, playersState.presidentCandidate)
+    constructor(playersState: PlayersState) : this(playersState.players)
 
     init {
         PlayerCount.of(players.size) // Size check
@@ -89,15 +81,5 @@ class PlayerManager(players: List<PlayerData>, var currentPresidentCandidate: Pl
     fun nextLiving(current: Player): Player = nextFiltered(current) { it.alive }
 
     fun randomPlayer(): Player = allPlayers.random().player
-
-    fun possibleChancellors(): List<Player> = allPlayers.filter {
-        lastGovernment?.let { gov ->
-            if (it.player != gov.president && it.player != gov.chancellor) {
-                return@filter false
-            }
-        }
-
-        it.alive && it.player != currentPresidentCandidate
-    }.map(PlayerData::player)
 
 }

@@ -6,17 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.mktiti.pockethitler.game.data.PhaseResult.PlainStateResult
-import com.mktiti.pockethitler.game.data.PhaseState.EnvelopeState
+import com.mktiti.pockethitler.game.data.PhaseResult
+import com.mktiti.pockethitler.game.data.PhaseState
 import org.jetbrains.anko.button
 import org.jetbrains.anko.matchParent
 import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
 
-class EnvelopeFragment(
-    private val state: EnvelopeState,
-    private val resultCallback: (PlainStateResult) -> Unit
+class CheckPartyViewFragment(
+    private val state: PhaseState.PresidentialPowerUseState.CheckPartyViewState,
+    private val resultCallback: (PhaseResult.PresidentialPowerDone) -> Unit
 ) : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = UI {
@@ -24,9 +24,11 @@ class EnvelopeFragment(
             gravity = Gravity.CENTER
             lparams(matchParent, matchParent)
 
-            textView(state.message)
-            button("Show").setOnClickListener {
-                resultCallback(PlainStateResult(state.nestedState))
+            textView("${state.player.name} is a")
+            textView("${state.player.identity.party}")
+
+            button("OK").setOnClickListener {
+                resultCallback(PhaseResult.PresidentialPowerDone)
             }
         }
     }.view

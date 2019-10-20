@@ -4,12 +4,17 @@ import com.mktiti.pockethitler.game.manager.ArticleDeck
 import com.mktiti.pockethitler.game.manager.PlayerManager
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.cbor.Cbor
+
+@Serializable
+data class ElectionState(
+    val failedElections: Int,
+    val presidentCandidate: Player,
+    val snapPresidentCandidate: Player?
+)
 
 @Serializable
 data class PlayersState(
-    val players: List<PlayerData>,
-    val presidentCandidate: Player
+    val players: List<PlayerData>
 )
 
 @Serializable
@@ -27,6 +32,7 @@ data class BoardsState(
 @Serializable
 data class TableState(
     val playersState: PlayersState,
+    val electionState: ElectionState,
     val deckState: DeckState,
     val boardsState: BoardsState
 )
@@ -46,11 +52,12 @@ data class GameState(
 }
 
 fun initNewState(players: List<String>): GameState {
-    val playerState =
-        PlayerManager.randomSetup(players)
+    val playerState = PlayerManager.randomSetup(players)
+    val firstPresident = playerState.players.random().player
     return GameState(
         tableState = TableState(
             playersState = playerState,
+            electionState = ElectionState(0, firstPresident, null),
             deckState = ArticleDeck.newDeck(),
             boardsState = BoardsState()
         ),

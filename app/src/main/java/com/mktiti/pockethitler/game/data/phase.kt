@@ -27,8 +27,12 @@ private val phaseModule = SerializersModule {
         PhaseState.VoteState::class with PhaseState.VoteState.serializer()
         PhaseState.ChancellorDiscardState::class with PhaseState.ChancellorDiscardState.serializer()
         PhaseState.PresidentDiscardState::class with PhaseState.PresidentDiscardState.serializer()
+        PhaseState.VetoConfirmState::class with PhaseState.VetoConfirmState.serializer()
         PhaseState.PresidentialPowerUseState.PeekCardsState::class with PhaseState.PresidentialPowerUseState.PeekCardsState.serializer()
+        PhaseState.PresidentialPowerUseState.CheckPartySelectState::class with PhaseState.PresidentialPowerUseState.CheckPartySelectState.serializer()
+        PhaseState.PresidentialPowerUseState.CheckPartyViewState::class with PhaseState.PresidentialPowerUseState.CheckPartyViewState.serializer()
         PhaseState.PresidentialPowerUseState.KillState::class with PhaseState.PresidentialPowerUseState.KillState.serializer()
+        PhaseState.GameWon::class with PhaseState.GameWon.serializer()
     }
 }
 
@@ -58,7 +62,7 @@ sealed class PhaseState {
     @Serializable
     data class VoteState(
         val candidates: Government,
-        val votes: List<Pair<Player, Boolean>>,
+        val votes: List<Pair<Player, Boolean>> = emptyList(),
         val futureVotes: List<Player>
     ) : PhaseState() {
 
@@ -69,22 +73,32 @@ sealed class PhaseState {
             futureVotes = futureVotes.drop(1)
         )
 
-        fun result(): Boolean? = if (futureVotes.isNotEmpty()) {
+        fun result(): PhaseResult.VoteResult? = if (futureVotes.isNotEmpty()) {
             null
         } else {
-            votes.count { it.second } >= (votes.size / 2 + votes.size % 2)
+            val success = votes.count { it.second } >= (votes.size / 2 + votes.size % 2)
+            PhaseResult.VoteResult(
+                votes = votes,
+                elected = if (success) candidates else null
+            )
         }
 
     }
 
     @Serializable
-    data class ChancellorDiscardState(
-        val cards: Bi<Article>
+    data class PresidentDiscardState(
+        val cards: Tri<Article>
     ) : PhaseState()
 
     @Serializable
-    data class PresidentDiscardState(
-        val cards: Tri<Article>
+    data class ChancellorDiscardState(
+        val cards: Bi<Article>,
+        val canVeto: Boolean
+    ) : PhaseState()
+
+    @Serializable
+    data class VetoConfirmState(
+        val cards: Bi<Article>
     ) : PhaseState()
 
     @Serializable
@@ -96,10 +110,28 @@ sealed class PhaseState {
         ) : PresidentialPowerUseState()
 
         @Serializable
+        data class SnapSelectState(
+            val selectablePlayers: List<Player>
+        ) : PresidentialPowerUseState()
+
+        @Serializable
+        data class CheckPartySelectState(
+            val selectablePlayers: List<Player>
+        ) : PresidentialPowerUseState()
+
+        @Serializable
+        data class CheckPartyViewState(
+            val player: Player
+        ) : PresidentialPowerUseState()
+
+        @Serializable
         data class KillState(
-            val players: List<String>
+            val selectablePlayers: List<Player>
         ) : PresidentialPowerUseState()
 
     }
+
+    @Serializable
+    data class GameWon(val winner: Party) : PhaseState()
 
 }

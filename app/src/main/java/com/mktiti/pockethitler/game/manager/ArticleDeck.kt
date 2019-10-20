@@ -32,7 +32,9 @@ class ArticleDeck(drawStack: List<Article>, discardStack: List<Article>) {
 
     private fun draw(): Article = drawStack.removeAt(0)
 
-    fun drawThree(): Tri<Article> = Tri(draw(), draw(), draw())
+    fun drawOne(): Article = draw().apply { shuffleIfNeeded() }
+
+    fun drawThree(): Tri<Article> = Tri(draw(), draw(), draw()).apply { shuffleIfNeeded() }
 
     fun peekThree(): Tri<Article> = Tri(drawStack[0], drawStack[1], drawStack[2])
 
@@ -40,7 +42,7 @@ class ArticleDeck(drawStack: List<Article>, discardStack: List<Article>) {
         discardStack += article
     }
 
-    fun shuffleIfNeeded(): Boolean = if (drawStack.size < 3) {
+    private fun shuffleIfNeeded(): Boolean = if (drawStack.size < 3) {
         drawStack += discardStack
         drawStack.shuffle()
         discardStack.clear()

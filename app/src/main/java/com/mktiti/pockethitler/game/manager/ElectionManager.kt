@@ -1,28 +1,57 @@
 package com.mktiti.pockethitler.game.manager
 
+import com.mktiti.pockethitler.game.data.ElectionState
 import com.mktiti.pockethitler.game.data.Government
 import com.mktiti.pockethitler.game.data.Player
 
 class ElectionManager(
-    private val playerManager: PlayerManager
+    private val playerManager: PlayerManager,
+    failedElections: Int,
+    president: Player,
+    snapPresident: Player?
 ) {
 
-    var failedElections: Int = 0
+    constructor(playerManager: PlayerManager, state: ElectionState) : this(playerManager, state.failedElections, state.presidentCandidate, state.snapPresidentCandidate)
+
+    val state: ElectionState
+        get() = ElectionState(failedElections, presidentCandidate, snapPresidentCandidate)
+
+    var failedElections: Int = failedElections
         private set
 
-    var lastPresidentCandidate = playerManager.randomPlayer()
+    private var snapPresidentCandidate: Player? = snapPresident
+
+    var presidentCandidate = president
         private set
 
     var lastElected: Government? = null
         private set
 
+    fun nextPresidentCandidate(): Player = playerManager.nextLiving(presidentCandidate).apply {
+        snapPresidentCandidate = null
+        presidentCandidate = this
+    }
+
+    fun possibleChancellors(): List<Player> = playerManager.livingPlayers.filter {
+        lastElected?.let { gov ->
+            if (it == gov.president || it == gov.chancellor) {
+                return@filter false
+            }
+        }
+
+        it != presidentCandidate
+    }
+
+    fun snapElection(presidentCandidate: Player) {
+        snapPresidentCandidate = presidentCandidate
+    }
+
     fun elect(government: Government) {
-        lastPresidentCandidate = government.president
         lastElected = government
     }
 
     fun unsuccessful(): Boolean {
-        lastPresidentCandidate
+        nextPresidentCandidate()
 
         return if (++failedElections == 3) {
             failedElections = 0
@@ -31,7 +60,5 @@ class ElectionManager(
             false
         }
     }
-
-    fun presidentCandidate(): Player = playerManager.nextLiving(lastPresidentCandidate)
 
 }
