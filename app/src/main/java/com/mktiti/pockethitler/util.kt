@@ -2,7 +2,11 @@ package com.mktiti.pockethitler
 
 typealias Bi<T> = Pair<T, T>
 
+fun <T> bi(value: T) = Bi(value, value)
+
 typealias Tri<T> = Triple<T, T, T>
+
+fun <T> tri(value: T) = Triple(value, value, value)
 
 sealed class Either<L, R>
 
