@@ -5,4 +5,10 @@
     <color name="colorAccent">#D81B60</color>
 
     <color name="black_overlay">#66000000</color>
+
+    <color name="fascistColor">#c36563</color>
+    <color name="liberalColor">#608cb3</color>
+
+    <color name="uiSeparatorColor">#7A7A7A</color>
+    <color name="articleTextColor">#ffffff</color>
 </resources>

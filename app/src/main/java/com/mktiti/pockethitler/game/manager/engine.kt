@@ -7,7 +7,7 @@ import com.mktiti.pockethitler.game.data.PhaseResult.*
 import com.mktiti.pockethitler.game.data.PhaseState.*
 import com.mktiti.pockethitler.game.data.PhaseState.PresidentialPowerUseState.KillState
 import com.mktiti.pockethitler.game.data.PhaseState.PresidentialPowerUseState.PeekCardsState
-import com.mktiti.pockethitler.view.*
+import com.mktiti.pockethitler.view.phase.*
 
 class GameEngine(
     private val initState: GameState,
@@ -27,10 +27,6 @@ class GameEngine(
     )
 
     private var phaseState: PhaseState = initState.phaseState
-
-    init {
-        //stateChangeCallback(initState.tableState, fragmentOfPhase(phaseState))
-    }
 
     fun start() {
         stateChangeCallback(initState.tableState, fragmentOfPhase(phaseState))
@@ -138,18 +134,51 @@ class GameEngine(
     }
 
     private fun fragmentOfPhase(state: PhaseState): Fragment = when (state) {
-        is EnvelopeState -> EnvelopeFragment(state, this::onPhaseResult)
-        is IdentityInfoState -> IdentityFragment(state, this::onPhaseResult)
-        is ChancellorSelectState -> ChancellorSelectFragment(state, this::onPhaseResult)
+        is EnvelopeState -> EnvelopeFragment(
+            state,
+            this::onPhaseResult
+        )
+        is IdentityInfoState -> IdentityFragment(
+            state,
+            this::onPhaseResult
+        )
+        is ChancellorSelectState -> ChancellorSelectFragment(
+            state,
+            this::onPhaseResult
+        )
         is VoteState -> VoteFragment(state, this::onPhaseResult)
-        is PresidentDiscardState -> PresidentDiscardFragment(state, this::onPhaseResult)
-        is ChancellorDiscardState -> ChancellorDiscardFragment(state, this::onPhaseResult)
-        is VetoConfirmState -> VetoConfirmFragment(state, this::onPhaseResult)
-        is PeekCardsState -> PeekCardsFragment(state, this::onPhaseResult)
-        is KillState -> ToKillSelectFragment(state, this::onPhaseResult)
-        is PresidentialPowerUseState.CheckPartySelectState -> CheckPartySelectFragment(state, this::onPhaseResult)
-        is PresidentialPowerUseState.CheckPartyViewState -> CheckPartyViewFragment(state, this::onPhaseResult)
-        is PresidentialPowerUseState.SnapSelectState -> SnapSelectFragment(state, this::onPhaseResult)
+        is PresidentDiscardState -> PresidentDiscardFragment(
+            state,
+            this::onPhaseResult
+        )
+        is ChancellorDiscardState -> ChancellorDiscardFragment(
+            state,
+            this::onPhaseResult
+        )
+        is VetoConfirmState -> VetoConfirmFragment(
+            state,
+            this::onPhaseResult
+        )
+        is PeekCardsState -> PeekCardsFragment(
+            state,
+            this::onPhaseResult
+        )
+        is KillState -> ToKillSelectFragment(
+            state,
+            this::onPhaseResult
+        )
+        is PresidentialPowerUseState.CheckPartySelectState -> CheckPartySelectFragment(
+            state,
+            this::onPhaseResult
+        )
+        is PresidentialPowerUseState.CheckPartyViewState -> CheckPartyViewFragment(
+            state,
+            this::onPhaseResult
+        )
+        is PresidentialPowerUseState.SnapSelectState -> SnapSelectFragment(
+            state,
+            this::onPhaseResult
+        )
         is GameWon -> GameOverFragment(state)
     }
 

@@ -1,4 +1,4 @@
-package com.mktiti.pockethitler.view
+package com.mktiti.pockethitler.view.phase
 
 import android.os.Bundle
 import android.view.Gravity

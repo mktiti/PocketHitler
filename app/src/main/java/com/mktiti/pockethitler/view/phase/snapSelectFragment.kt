@@ -1,4 +1,4 @@
-package com.mktiti.pockethitler.view
+package com.mktiti.pockethitler.view.phase
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,13 +7,14 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.mktiti.pockethitler.game.data.PhaseResult
 import com.mktiti.pockethitler.game.data.PhaseState
+import com.mktiti.pockethitler.view.PlayerSelectView
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.linearLayout
 import org.jetbrains.anko.support.v4.UI
 
-class ToKillSelectFragment(
-    private val state: PhaseState.PresidentialPowerUseState.KillState,
+class SnapSelectFragment(
+    private val state: PhaseState.PresidentialPowerUseState.SnapSelectState,
     private val stateChangeCallback: (PhaseResult.KillTargetSelected) -> Unit
 ) : Fragment() {
 
@@ -21,7 +22,7 @@ class ToKillSelectFragment(
         linearLayout {
             ankoView(factory = {
                 PlayerSelectView(
-                    message = "Select player to kill.",
+                    message = "Select presidential candidate for snap election.",
                     subtitle = "Allowed selectablePlayers:",
                     allowedPlayers = state.selectablePlayers,
                     selectCallback = { stateChangeCallback(PhaseResult.KillTargetSelected(it)) }

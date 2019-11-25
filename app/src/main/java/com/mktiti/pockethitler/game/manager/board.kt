@@ -34,9 +34,26 @@ enum class PlayerCount(val fascistCount: Int) {
 }
 
 class FascistBoard(
-    private val playerCount: PlayerCount,
+    playerCount: PlayerCount,
     cardsDown: Int = 0
 ) : Board(6, cardsDown) {
+
+    companion object {
+        fun actions(playerCount: PlayerCount): List<PresidentialAction?> = listOf(
+            byPlayerCount(playerCount, null, null, CHECK_PARTY),
+            byPlayerCount(playerCount, null, CHECK_PARTY, CHECK_PARTY),
+            byPlayerCount(playerCount, PEEK_NEXT, SNAP_ELECTION, SNAP_ELECTION),
+            KILL, KILL, null
+        )
+
+        private fun <T> byPlayerCount(playerCount: PlayerCount, few: T, medium: T, many: T): T = when (playerCount) {
+            PlayerCount.FEW -> few
+            PlayerCount.MEDIUM -> medium
+            PlayerCount.MANY -> many
+        }
+    }
+
+    private val actions: List<PresidentialAction?> = actions(playerCount)
 
     val inRedZone: Boolean
         get() = count >= 3
@@ -44,25 +61,16 @@ class FascistBoard(
     val isVetoEnabled: Boolean
         get() = count >= 5
 
-    private fun <T> byPlayerCount(few: T, medium: T, many: T): T = when (playerCount) {
-        PlayerCount.FEW -> few
-        PlayerCount.MEDIUM -> medium
-        PlayerCount.MANY -> many
-    }
-
-    override fun place(): PresidentialAction? = when (++count) {
-        1 -> byPlayerCount(null, null, CHECK_PARTY)
-        2 -> byPlayerCount(null, CHECK_PARTY, CHECK_PARTY)
-        3 -> byPlayerCount(PEEK_NEXT, SNAP_ELECTION, SNAP_ELECTION)
-        4, 5 -> KILL
-        else -> null
-    }
+    override fun place(): PresidentialAction? = actions[++count]
 
 }
 
 class LiberalBoard(cardsDown: Int = 0) : Board(5, cardsDown) {
 
-    override fun place(): PresidentialAction? = null
+    override fun place(): PresidentialAction? {
+        count++
+        return null
+    }
 
 }
 

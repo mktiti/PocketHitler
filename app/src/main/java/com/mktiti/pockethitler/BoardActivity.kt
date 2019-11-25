@@ -15,7 +15,10 @@ import org.jetbrains.anko.button
 import org.jetbrains.anko.linearLayout
 
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import com.mktiti.pockethitler.game.PresidentialAction
 import com.mktiti.pockethitler.game.data.TableState
+import com.mktiti.pockethitler.game.manager.FascistBoard
+import com.mktiti.pockethitler.game.manager.PlayerCount
 
 const val STATE_KEY = "game-state"
 private const val DYN_FRAG_TAG = "dynamic-fragment"
@@ -72,6 +75,9 @@ class BoardActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         engine.start()
+
+        val playerCount = engine.currentState().tableState.playersState.players.size
+        boardFragment.setConfig(FascistBoard.actions(PlayerCount.of(playerCount)))
     }
 
     private fun switchFrags() {

@@ -61,6 +61,7 @@ fun initNewState(players: List<String>): GameState {
             deckState = ArticleDeck.newDeck(),
             boardsState = BoardsState()
         ),
-        phaseState = startState(playerState.players.map { it.player })
+        //phaseState = startState(playerState.players.map { it.player })
+        phaseState = PhaseState.PresidentDiscardState(Triple(Article.LIBERAL, Article.FASCIST, Article.LIBERAL))
     )
 }

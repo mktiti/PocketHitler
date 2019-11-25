@@ -1,4 +1,4 @@
-package com.mktiti.pockethitler.view
+package com.mktiti.pockethitler.view.phase
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.mktiti.pockethitler.game.data.PhaseResult
 import com.mktiti.pockethitler.game.data.PhaseState
+import com.mktiti.pockethitler.view.PlayerSelectView
 import org.jetbrains.anko.AnkoContext
 import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.linearLayout

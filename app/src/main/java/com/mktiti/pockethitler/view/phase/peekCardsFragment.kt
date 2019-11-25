@@ -1,11 +1,9 @@
-package com.mktiti.pockethitler.view
+package com.mktiti.pockethitler.view.phase
 
 import android.os.Bundle
-import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
+import com.mktiti.pockethitler.game.data.Article
 import com.mktiti.pockethitler.game.data.PhaseResult
 import com.mktiti.pockethitler.game.data.PhaseState
 import org.jetbrains.anko.button
@@ -14,8 +12,8 @@ import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.verticalLayout
 
-class CheckPartyViewFragment(
-    private val state: PhaseState.PresidentialPowerUseState.CheckPartyViewState,
+class PeekCardsFragment(
+    private val state: PhaseState.PresidentialPowerUseState.PeekCardsState,
     private val resultCallback: (PhaseResult.PresidentialPowerDone) -> Unit
 ) : Fragment() {
 
@@ -24,13 +22,22 @@ class CheckPartyViewFragment(
             gravity = Gravity.CENTER
             lparams(matchParent, matchParent)
 
-            textView("${state.player.name} is a")
-            textView("${state.player.identity.party}")
+            textView("Next 3 cards")
+
+            state.cards.apply {
+                article(first)
+                article(second)
+                article(third)
+            }
 
             button("OK").setOnClickListener {
                 resultCallback(PhaseResult.PresidentialPowerDone)
             }
         }
     }.view
+
+    private fun ViewManager.article(article: Article) {
+        textView(if (article == Article.LIBERAL) "Liberal" else "Fascist")
+    }
 
 }
