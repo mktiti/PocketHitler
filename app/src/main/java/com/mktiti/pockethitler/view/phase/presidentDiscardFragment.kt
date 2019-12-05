@@ -5,10 +5,10 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Button
 import androidx.fragment.app.Fragment
-import com.mktiti.pockethitler.Bi
 import com.mktiti.pockethitler.game.data.Article
 import com.mktiti.pockethitler.game.data.PhaseResult
 import com.mktiti.pockethitler.game.data.PhaseState
+import com.mktiti.pockethitler.util.Bi
 import com.mktiti.pockethitler.view.card.ArticleUiProvider
 import com.mktiti.pockethitler.view.card.DefaultArticleProvider
 import org.jetbrains.anko.*

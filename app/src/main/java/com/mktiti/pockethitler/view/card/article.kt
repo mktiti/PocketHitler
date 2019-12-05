@@ -1,17 +1,17 @@
 package com.mktiti.pockethitler.view.card
 
-import android.graphics.*
+import android.graphics.Bitmap
+import android.graphics.Paint
+import android.graphics.RectF
 import androidx.core.graphics.applyCanvas
-import com.mktiti.pockethitler.game.PresidentialAction
 import com.mktiti.pockethitler.game.data.Article
-
-interface ArticleHolderUiProvider {
-
-    fun liberalHolder(last: Boolean): Bitmap
-
-    fun fascistHolder(presidentialAction: PresidentialAction?, last: Boolean): Bitmap
-
-}
+import com.mktiti.pockethitler.util.ListLruCache
+import com.mktiti.pockethitler.util.LruCache
+import com.mktiti.pockethitler.view.card.DefaultArticleHelper.fashPaint
+import com.mktiti.pockethitler.view.card.DefaultArticleHelper.libPaint
+import com.mktiti.pockethitler.view.card.DefaultArticleHelper.maxTextSize
+import com.mktiti.pockethitler.view.card.DefaultArticleHelper.whitePaint
+import com.mktiti.pockethitler.view.card.DefaultArticleHelper.writeToCanvasMiddle
 
 interface ArticleUiProvider {
 
@@ -26,53 +26,35 @@ interface ArticleUiProvider {
 
 }
 
-fun writeToCanvasMiddle(text: String, canvas: Canvas, ratio: Float, basePaint: Paint) {
-    val desireWidth = canvas.width * ratio
-
-    Paint(basePaint).apply {
-        textSize = 48F
-        val bounds = Rect()
-        getTextBounds(text, 0, text.length, bounds)
-
-        textSize *= desireWidth / bounds.width()
-
-        val textHeight = desireWidth / bounds.width() * bounds.height()
-
-        canvas.drawText(text, (canvas.width - desireWidth) / 2F, (canvas.height - textHeight) / 2F + textHeight, this)
-    }
-}
-
 class DefaultArticleProvider(private val width: Int, private val height: Int) : ArticleUiProvider {
 
     companion object {
 
-        private val map = mutableMapOf<Pair<Int, Int>, ArticleUiProvider>()
+        private const val libText = "Liberal"
+        private const val fashText = "Fascist"
+        private val allTexts = listOf(libText, fashText)
 
-        fun forSize(width: Int, height: Int) = map.computeIfAbsent(width to height, ::DefaultArticleProvider)
+        private val cache: LruCache<Pair<Int, Int>, ArticleUiProvider> = ListLruCache()
+
+        fun forSize(width: Int, height: Int) = cache.getOrCreate(width to height, ::DefaultArticleProvider)
 
     }
 
     constructor(size: Pair<Int, Int>) : this(size.first, size.second)
 
-    private val borderWidth = 0.1F * width
+    private val textSize: Float = maxTextSize(0.5F * width, allTexts)
 
-    private val whitePaint = Paint().apply { color = Color.WHITE }
+    private val borderWidth = 0.15F * width
 
-    private val libArticle: Bitmap by lazy {
-        createArticle("Liberal", Color.rgb(96, 140, 169))
-    }
+    private val libArticle: Bitmap = createArticle(libText, libPaint)
 
-    private val fashArticle: Bitmap by lazy {
-        createArticle("Fascist", Color.rgb(195, 101, 99))
-    }
+    private val fashArticle: Bitmap = createArticle(fashText, fashPaint)
 
-    private fun createArticle(text: String, color: Int) = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).applyCanvas {
-        val paint = Paint().apply { this.color = color }
-
+    private fun createArticle(text: String, paint: Paint) = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).applyCanvas {
         drawRect(RectF(0F, 0F, width.toFloat(), height.toFloat()), paint)
         drawRect(borderWidth, borderWidth, width - borderWidth, height - borderWidth, whitePaint)
 
-        writeToCanvasMiddle(text, this, 0.5F, paint)
+        writeToCanvasMiddle(text, this, textSize, paint)
     }
 
     override fun liberalArticle(): Bitmap = libArticle

@@ -1,9 +1,9 @@
 package com.mktiti.pockethitler.game.manager
 
-import com.mktiti.pockethitler.Tri
 import com.mktiti.pockethitler.game.data.Article
 import com.mktiti.pockethitler.game.data.DeckState
-import com.mktiti.pockethitler.repeatList
+import com.mktiti.pockethitler.util.Tri
+import com.mktiti.pockethitler.util.repeatList
 import java.util.*
 
 class ArticleDeck(drawStack: List<Article>, discardStack: List<Article>) {
@@ -34,9 +34,14 @@ class ArticleDeck(drawStack: List<Article>, discardStack: List<Article>) {
 
     fun drawOne(): Article = draw().apply { shuffleIfNeeded() }
 
-    fun drawThree(): Tri<Article> = Tri(draw(), draw(), draw()).apply { shuffleIfNeeded() }
+    fun drawThree(): Tri<Article> = Tri(
+        draw(),
+        draw(),
+        draw()
+    ).apply { shuffleIfNeeded() }
 
-    fun peekThree(): Tri<Article> = Tri(drawStack[0], drawStack[1], drawStack[2])
+    fun peekThree(): Tri<Article> =
+        Tri(drawStack[0], drawStack[1], drawStack[2])
 
     fun discard(article: Article) {
         discardStack += article

@@ -1,6 +1,6 @@
 package com.mktiti.pockethitler.game.data
 
-import com.mktiti.pockethitler.Bi
+import com.mktiti.pockethitler.util.Bi
 
 sealed class PhaseResult {
 

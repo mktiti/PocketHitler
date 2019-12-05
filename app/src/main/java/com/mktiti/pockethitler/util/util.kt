@@ -1,4 +1,4 @@
-package com.mktiti.pockethitler
+package com.mktiti.pockethitler.util
 
 typealias Bi<T> = Pair<T, T>
 

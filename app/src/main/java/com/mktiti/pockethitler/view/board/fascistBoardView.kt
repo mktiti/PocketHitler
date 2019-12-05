@@ -3,36 +3,37 @@ package com.mktiti.pockethitler.view.board
 import android.content.Context
 import android.view.Gravity
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.TextView
 import com.mktiti.pockethitler.game.PresidentialAction
-import org.jetbrains.anko.textView
+import com.mktiti.pockethitler.game.manager.FascistBoard
+import com.mktiti.pockethitler.game.manager.PlayerCount
+import com.mktiti.pockethitler.view.card.ArticleHolderUiProvider
+import com.mktiti.pockethitler.view.card.ArticleUiProvider
+import com.mktiti.pockethitler.view.card.DefaultArticleHolderProvider
+import com.mktiti.pockethitler.view.card.DefaultArticleProvider
+import org.jetbrains.anko.imageView
 import org.jetbrains.anko.verticalLayout
 
 class FascistBoardView(context: Context) : LinearLayout(context) {
 
-    private class CardHolder(
-        private val actionView: TextView,
-        private val holderView: TextView
+    private val articleProvider: ArticleUiProvider = DefaultArticleProvider.forSize(320, 500)
+    private val holderProvider: ArticleHolderUiProvider = DefaultArticleHolderProvider.forSize(320, 500)
+
+    private inner class CardHolder(
+        private val view: ImageView,
+        private val last: Boolean = false
     ) {
         init {
-            setCard(false)
+            noCard(null)
         }
 
-        fun setCard(occupied: Boolean) {
-            holderView.text = if (occupied) {
-                "PLACED"
-            } else {
-                "X"
-            }
+        fun noCard(presidentialAction: PresidentialAction?) {
+            view.setImageBitmap(holderProvider.fascistHolder(presidentialAction, last))
         }
 
-        fun setAction(action: PresidentialAction?, last: Boolean) {
-            actionView.text = when {
-                action != null -> action.name
-                last -> "FASCIST WIN"
-                else -> "FASCIST"
-            }
+        fun addArticle() {
+            view.setImageBitmap(articleProvider.fascistArticle())
         }
     }
 
@@ -42,29 +43,31 @@ class FascistBoardView(context: Context) : LinearLayout(context) {
         orientation = HORIZONTAL
         layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT, 1F)
         gravity = Gravity.CENTER
+        val cardCount = FascistBoard.actions(PlayerCount.MANY).size
+        weightSum = cardCount.toFloat()
 
-        holders = ArrayList(6)
-        repeat(6) {
-            verticalLayout {
-                gravity = Gravity.CENTER
-
-                holders += CardHolder(
-                    actionView = textView(),
-                    holderView = textView()
-                )
+        holders = ArrayList<CardHolder>(cardCount).apply {
+            repeat(cardCount) { i ->
+                verticalLayout {
+                    gravity = Gravity.CENTER
+                    add(CardHolder(imageView(), i == cardCount - 1))
+                    layoutParams = generateDefaultLayoutParams().apply {
+                        weight = 1F
+                    }
+                }
             }
         }
     }
 
     fun setBoard(fascistPowers: List<PresidentialAction?>) {
-        holders.zip(fascistPowers).forEachIndexed { i, (holder, action) ->
-            holder.setAction(action, i == holders.size - 1)
+        holders.zip(fascistPowers).forEach { (holder, action) ->
+            holder.noCard(action)
         }
     }
 
     fun setState(cardCount: Int) {
         holders.take(cardCount).forEach {
-            it.setCard(true)
+            it.addArticle()
         }
     }
 

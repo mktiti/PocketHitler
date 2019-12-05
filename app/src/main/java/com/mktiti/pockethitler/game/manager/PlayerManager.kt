@@ -1,12 +1,12 @@
 package com.mktiti.pockethitler.game.manager
 
-import com.mktiti.pockethitler.forever
-import com.mktiti.pockethitler.game.data.*
+import com.mktiti.pockethitler.game.data.Player
+import com.mktiti.pockethitler.game.data.PlayerData
+import com.mktiti.pockethitler.game.data.PlayerIdentity
+import com.mktiti.pockethitler.game.data.PlayerIdentity.*
+import com.mktiti.pockethitler.game.data.PlayersState
+import com.mktiti.pockethitler.util.forever
 import java.util.*
-
-import com.mktiti.pockethitler.game.data.PlayerIdentity.LIBERAL
-import com.mktiti.pockethitler.game.data.PlayerIdentity.FASCIST
-import com.mktiti.pockethitler.game.data.PlayerIdentity.HITLER
 
 class PlayerManager(players: List<PlayerData>) {
 

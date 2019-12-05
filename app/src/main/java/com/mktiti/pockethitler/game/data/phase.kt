@@ -1,9 +1,9 @@
 package com.mktiti.pockethitler.game.data
 
-import com.mktiti.pockethitler.Bi
-import com.mktiti.pockethitler.Tri
 import com.mktiti.pockethitler.game.data.PlayerIdentity.FASCIST
 import com.mktiti.pockethitler.game.data.PlayerIdentity.HITLER
+import com.mktiti.pockethitler.util.Bi
+import com.mktiti.pockethitler.util.Tri
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
