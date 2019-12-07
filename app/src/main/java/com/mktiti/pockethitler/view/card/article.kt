@@ -4,9 +4,11 @@ import android.graphics.Bitmap
 import android.graphics.Paint
 import android.graphics.RectF
 import androidx.core.graphics.applyCanvas
+import com.mktiti.pockethitler.R
 import com.mktiti.pockethitler.game.data.Article
 import com.mktiti.pockethitler.util.ListLruCache
 import com.mktiti.pockethitler.util.LruCache
+import com.mktiti.pockethitler.util.ResourceManager
 import com.mktiti.pockethitler.view.card.DefaultArticleHelper.fashPaint
 import com.mktiti.pockethitler.view.card.DefaultArticleHelper.libPaint
 import com.mktiti.pockethitler.view.card.DefaultArticleHelper.maxTextSize
@@ -26,21 +28,21 @@ interface ArticleUiProvider {
 
 }
 
-class DefaultArticleProvider(private val width: Int, private val height: Int) : ArticleUiProvider {
+class DefaultArticleProvider(private val width: Int, private val height: Int, val resourceManager: ResourceManager) : ArticleUiProvider {
 
     companion object {
 
-        private const val libText = "Liberal"
-        private const val fashText = "Fascist"
-        private val allTexts = listOf(libText, fashText)
-
         private val cache: LruCache<Pair<Int, Int>, ArticleUiProvider> = ListLruCache()
 
-        fun forSize(width: Int, height: Int) = cache.getOrCreate(width to height, ::DefaultArticleProvider)
+        fun forSize(width: Int, height: Int, resourceManager: () -> ResourceManager) = cache.getOrCreate(width to height) {
+            DefaultArticleProvider(it.first, it.second, resourceManager())
+        }
 
     }
 
-    constructor(size: Pair<Int, Int>) : this(size.first, size.second)
+    private val libText = resourceManager[R.string.liberal]
+    private val fashText = resourceManager[R.string.fascist]
+    private val allTexts = listOf(libText, fashText)
 
     private val textSize: Float = maxTextSize(0.5F * width, allTexts)
 

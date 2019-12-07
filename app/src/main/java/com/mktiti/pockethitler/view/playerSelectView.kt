@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.mktiti.pockethitler.R
 import com.mktiti.pockethitler.game.data.Player
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
@@ -14,14 +15,16 @@ import org.jetbrains.anko.recyclerview.v7.recyclerView
 private class PlayerView : AnkoComponent<ViewGroup> {
 
     companion object {
-        val nameId = 1
-        val selectButtonId = 2
+        const val nameId = 1
+        const val selectButtonId = 2
     }
 
     override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
         linearLayout {
             textView { id = nameId }
-            button("Select") { id = selectButtonId }
+            button(R.string.select) {
+                id = selectButtonId
+            }
         }
     }
 

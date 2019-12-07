@@ -5,6 +5,7 @@ import android.view.Gravity
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.mktiti.pockethitler.R
 import com.mktiti.pockethitler.game.data.DeckState
 import org.jetbrains.anko.textView
 import org.jetbrains.anko.wrapContent
@@ -19,7 +20,7 @@ class DeckView(context: Context) : LinearLayout(context) {
         gravity = Gravity.CENTER
         setPadding(10, 0, 10, 0)
 
-        textView("Remaining:") {
+        textView(R.string.remaining_cards) {
             layoutParams = generateDefaultLayoutParams().apply {
                 width = wrapContent
             }

@@ -4,10 +4,12 @@ import android.graphics.Bitmap
 import android.graphics.DashPathEffect
 import android.graphics.Paint
 import androidx.core.graphics.applyCanvas
+import com.mktiti.pockethitler.R
 import com.mktiti.pockethitler.game.PresidentialAction
 import com.mktiti.pockethitler.game.PresidentialAction.*
 import com.mktiti.pockethitler.util.ListLruCache
 import com.mktiti.pockethitler.util.LruCache
+import com.mktiti.pockethitler.util.ResourceManager
 import com.mktiti.pockethitler.view.card.DefaultArticleHelper.fashPaint
 import com.mktiti.pockethitler.view.card.DefaultArticleHelper.libPaint
 import com.mktiti.pockethitler.view.card.DefaultArticleHelper.maxTextSize
@@ -22,28 +24,34 @@ interface ArticleHolderUiProvider {
 
 }
 
-class DefaultArticleHolderProvider(private val width: Int, private val height: Int) : ArticleHolderUiProvider {
+class DefaultArticleHolderProvider(
+    private val width: Int,
+    private val height: Int,
+    private val resourceManager: ResourceManager
+) : ArticleHolderUiProvider {
 
     companion object {
 
-        private const val libText = "Victory"
-        private const val fashText = "Victory"
-        private val allTexts = listOf(libText, fashText) + values().map(this::actionTitle)
-
         private val cache: LruCache<Pair<Int, Int>, ArticleHolderUiProvider> = ListLruCache()
 
-        fun forSize(width: Int, height: Int) = cache.getOrCreate(width to height, ::DefaultArticleHolderProvider)
-
-        private fun actionTitle(action: PresidentialAction) = when (action) {
-            CHECK_PARTY -> "Investigate"
-            SNAP_ELECTION -> "Snap election"
-            PEEK_NEXT -> "Peek 3"
-            KILL -> "Kill"
+        fun forSize(width: Int, height: Int, resourceManager: () -> ResourceManager) = cache.getOrCreate(width to height) {
+            DefaultArticleHolderProvider(it.first, it.second, resourceManager())
         }
 
     }
 
-    constructor(size: Pair<Int, Int>) : this(size.first, size.second)
+    private val victoryText = resourceManager[R.string.victory]
+    private val allTexts =  PresidentialAction.values().map(this::actionTitle) + victoryText
+
+    private fun actionTitle(action: PresidentialAction): String {
+        val key = when (action) {
+            CHECK_PARTY -> R.string.pres_act_investigate
+            SNAP_ELECTION -> R.string.pres_act_snap
+            PEEK_NEXT -> R.string.pres_act_peek
+            KILL -> R.string.pres_act_kill
+        }
+        return resourceManager[key]
+    }
 
     private val widthF = width.toFloat()
     private val heightF = height.toFloat()
@@ -65,15 +73,15 @@ class DefaultArticleHolderProvider(private val width: Int, private val height: I
 
     private val libHolder: Bitmap = createHolder("", libPaint)
 
-    private val libEndHolder: Bitmap = createHolder(libText, libPaint, inverted = true)
+    private val libEndHolder: Bitmap = createHolder(victoryText, libPaint, inverted = true)
 
     private val fashHolder: Bitmap = createHolder("", fashPaint)
 
-    private val fashHolderMap: Map<PresidentialAction, Bitmap> = values().mapIndexed { i, action ->
+    private val fashHolderMap: Map<PresidentialAction, Bitmap> = PresidentialAction.values().mapIndexed { i, action ->
         action to createHolder(actionTitle(action), fashPaint, inverted = i >= 3)
     }.toMap()
 
-    private val fashEndHolder: Bitmap = createHolder(fashText, fashPaint, inverted = true)
+    private val fashEndHolder: Bitmap = createHolder(victoryText, fashPaint, inverted = true)
 
     private fun createHolder(text: String, paint: Paint, inverted: Boolean = false) = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).applyCanvas {
         val borderPaint = Paint(paint).apply {

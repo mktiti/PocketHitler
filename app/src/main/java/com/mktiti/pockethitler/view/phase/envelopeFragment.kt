@@ -5,9 +5,8 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.marginLeft
-import androidx.core.view.marginRight
 import androidx.fragment.app.Fragment
+import com.mktiti.pockethitler.R
 import com.mktiti.pockethitler.game.data.PhaseResult.PlainStateResult
 import com.mktiti.pockethitler.game.data.PhaseState.EnvelopeState
 import org.jetbrains.anko.*
@@ -28,7 +27,7 @@ class EnvelopeFragment(
                 textAlignment = View.TEXT_ALIGNMENT_CENTER
             }
 
-            button("Show").lparams(width = wrapContent, height = wrapContent).setOnClickListener {
+            button(R.string.env_show).lparams(width = wrapContent, height = wrapContent).setOnClickListener {
                 resultCallback(PlainStateResult(state.nestedState))
             }
         }

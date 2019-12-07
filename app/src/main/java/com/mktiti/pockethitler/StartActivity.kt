@@ -2,14 +2,10 @@ package com.mktiti.pockethitler
 
 import android.os.Bundle
 import android.os.PersistableBundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.mktiti.pockethitler.game.data.*
-import kotlinx.serialization.json.Json
-import org.jetbrains.anko.button
-import org.jetbrains.anko.intentFor
-import org.jetbrains.anko.linearLayout
-import org.jetbrains.anko.singleTop
+import com.mktiti.pockethitler.game.data.initNewState
+import com.mktiti.pockethitler.util.DefaultResourceManager
+import org.jetbrains.anko.*
 
 private const val PLAYERS_KEY = "selectablePlayers"
 
@@ -22,9 +18,11 @@ class StartActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         linearLayout {
-            button("Start").setOnClickListener {
+            button {
+                textResource = R.string.start
+            }.setOnClickListener {
                 startActivity(intentFor<BoardActivity>(
-                    STATE_KEY to initNewState(players).stringify()
+                    STATE_KEY to initNewState(players, DefaultResourceManager(resources)).stringify()
                 ).singleTop())
             }
         }

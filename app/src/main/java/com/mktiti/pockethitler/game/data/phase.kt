@@ -1,19 +1,21 @@
 package com.mktiti.pockethitler.game.data
 
+import com.mktiti.pockethitler.R
+import com.mktiti.pockethitler.game.data.PhaseState.*
 import com.mktiti.pockethitler.game.data.PlayerIdentity.FASCIST
 import com.mktiti.pockethitler.game.data.PlayerIdentity.HITLER
 import com.mktiti.pockethitler.util.Bi
+import com.mktiti.pockethitler.util.ResourceManager
 import com.mktiti.pockethitler.util.Tri
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
-import com.mktiti.pockethitler.game.data.PhaseState.*
 
-fun startState(players: List<Player>): PhaseState =
-    PhaseState.EnvelopeState(
-        message = "Secret identity of ${players.first().name}",
-        nestedState = PhaseState.IdentityInfoState(
+fun startState(players: List<Player>, resourceManager: ResourceManager): PhaseState =
+    EnvelopeState(
+        message = resourceManager.format(R.string.env_secret_id, players.first().name),
+        nestedState = IdentityInfoState(
             identities = players,
             hitlerName = players.find { it.identity == HITLER }?.name!!,
             fascistNames = players.filter { it.identity == FASCIST }.map { it.name }

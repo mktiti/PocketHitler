@@ -1,7 +1,65 @@
 <resources>
     <string name="app_name">PocketHitler</string>
 
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_board">BoardActivity</string>
+
+    <string name="env_secret_id">Secret identity of %1$s</string>
+    <string name="env_general">Only for %1$s</string>
+    <string name="vote_result">Vote results: \'Ja\'s: %1$s, \'Nein\'s: %2$s</string>
+    <string name="articles_for">Articles for %1$s</string>
+    <string name="env_for_chancellor">Only for Chancellor %1$s</string>
+    <string name="president_peek">President peek cards</string>
+    <string name="env_for_president">Only for President %1$s</string>
+    <string name="switch_frag_view">Switch\nview</string>
+    <string name="start">Start</string>
+    <string name="remaining_cards">Remaining:</string>
+    <string name="no_chancellor">No Chancellor</string>
+    <string name="no_president">No President</string>
+    <string name="chancellor_is">Chancellor: %1$s</string>
+    <string name="president_is">President: %1$s</string>
+
+    <string-array name="election_tracker">
+        <item>Election tracker: ● - ○ - ○</item>
+        <item>Election tracker: ○ - ● - ○</item>
+        <item>Election tracker: ○ - ○ - ●</item>
+    </string-array>
+
+    <string name="liberal">Liberal</string>
+    <string name="fascist">Fascist</string>
+    <string name="victory">Victory</string>
+    <string name="pres_act_investigate">Investigate</string>
+    <string name="pres_act_snap">Snap election</string>
+    <string name="pres_act_peek">Peek 3</string>
+    <string name="pres_act_kill">Kill</string>
+    <string name="select">Select</string>
+    <string name="ok">OK</string>
+    <string name="articles_to_pass">Select articles to pass</string>
+    <string name="articles_to_play">Select article to play</string>
+    <string name="next_3_articles">Next 3 articles</string>
+    <string name="you_are_lib">You are a boring LIBERAL :(</string>
+    <string name="you_are_fash">You are a dirty FASCIST!</string>
+    <string name="you_are_hitler">Sig Heil, HITLER!</string>
+    <string name="unknown_identity">\???</string>
+    <string name="id_of_hitler">Hitler:</string>
+    <string name="id_of_fash">Fascist %d:</string>
+    <string name="liberals">Liberals</string>
+    <string name="fascists">Fascists</string>
+    <string name="won_the_game">have won the game!</string>
+    <string name="env_show">Show</string>
+    <string name="is_a">%1$s is a</string>
+    <string name="select_chancellor">Select your Chancellor candidate</string>
+    <string name="select_to_inspect">Select player to inspect</string>
+    <string name="select_snap">Select presidential candidate for snap election</string>
+    <string name="select_to_kill">Select player to kill</string>
+    <string name="allowed_selectable">Allowed players:</string>
+    <string name="allowed_candidates">Allowed nominees:</string>
+    <string name="veto_confirm_title">Confirm veto?</string>
+    <string name="accept_veto">Accept Veto\n(discard both cards)</string>
+    <string name="reject_veto">Reject Veto\n(force Chancellor to choose)</string>
+    <string name="voting">Voting (%1$s)</string>
+    <string name="ja">Ja</string>
+    <string name="nein">Nein</string>
+    <string name="pres_candidate_is">President candidate is: %1$s</string>
+    <string name="chancellor_candidate_is">Chancellor candidate is: %1$s</string>
+
 </resources>

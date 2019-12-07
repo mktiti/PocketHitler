@@ -1,18 +1,21 @@
 package com.mktiti.pockethitler.game.manager
 
 import androidx.fragment.app.Fragment
+import com.mktiti.pockethitler.R
 import com.mktiti.pockethitler.game.PresidentialAction
 import com.mktiti.pockethitler.game.data.*
 import com.mktiti.pockethitler.game.data.PhaseResult.*
 import com.mktiti.pockethitler.game.data.PhaseState.*
 import com.mktiti.pockethitler.game.data.PhaseState.PresidentialPowerUseState.KillState
 import com.mktiti.pockethitler.game.data.PhaseState.PresidentialPowerUseState.PeekCardsState
+import com.mktiti.pockethitler.util.ResourceManager
 import com.mktiti.pockethitler.view.phase.*
 
 class GameEngine(
     private val initState: GameState,
     private val messageCallback: (String) -> Unit,
-    private val stateChangeCallback: (TableState, Fragment?) -> Unit
+    private val stateChangeCallback: (TableState, Fragment?) -> Unit,
+    private val resourceManager: ResourceManager
 ) {
 
     private val playerManager = PlayerManager(initState.tableState.playersState)
@@ -50,7 +53,7 @@ class GameEngine(
             is IdentificationDone -> ChancellorSelectState(electionManager.possibleChancellors())
 
             is CandidatesSelected -> EnvelopeState(
-                "For ${playerManager.livingPlayers.first().name}",
+                message = resourceManager.format(R.string.env_general, playerManager.livingPlayers.first().name),
                 nestedState = VoteState(
                     candidates = Government(
                         president = electionManager.presidentCandidate,
@@ -60,7 +63,7 @@ class GameEngine(
             )
 
             is VoteResult -> {
-                messageCallback("Vote result for: Ja: ${result.jas}, Neins: ${result.neins}")
+                messageCallback(resourceManager.format(R.string.vote_result, result.jas, result.neins))
                 if (result.elected == null) {
                     if (electionManager.unsuccessful()) {
                         val article = deck.drawOne()
@@ -78,13 +81,13 @@ class GameEngine(
                     GameWon(Party.FASCIST)
                 } else {
                     electionManager.elect(result.elected)
-                    EnvelopeState("Cards for ${result.elected.president.name}", PresidentDiscardState(deck.drawThree()))
+                    EnvelopeState(resourceManager.format(R.string.articles_for, result.elected.president.name), PresidentDiscardState(deck.drawThree()))
                 }
             }
 
             is PresidentDiscardResult -> {
                 deck.discard(result.discarded)
-                EnvelopeState("Confidential, only for Chancellor XY", ChancellorDiscardState(result.forwarded, boards.isVetoEnabled))
+                EnvelopeState(resourceManager.format(R.string.env_for_chancellor, "XY"), ChancellorDiscardState(result.forwarded, boards.isVetoEnabled))
             }
 
             is ChancellorDiscardResult -> {
@@ -92,7 +95,7 @@ class GameEngine(
                 when (boards.place(result.placed)) {
                     PresidentialAction.CHECK_PARTY -> PresidentialPowerUseState.CheckPartySelectState(playerManager.livingPlayers)
                     PresidentialAction.SNAP_ELECTION -> PresidentialPowerUseState.SnapSelectState(playerManager.livingPlayers)
-                    PresidentialAction.PEEK_NEXT -> EnvelopeState("President peek cards", PeekCardsState(deck.peekThree()))
+                    PresidentialAction.PEEK_NEXT -> EnvelopeState(resourceManager[R.string.president_peek], PeekCardsState(deck.peekThree()))
                     PresidentialAction.KILL -> KillState(playerManager.livingPlayers)
                     null -> {
                         when (boards.finished) {
@@ -119,7 +122,7 @@ class GameEngine(
                 ChancellorSelectState(electionManager.possibleChancellors())
             }
 
-            is CheckPartySelected -> EnvelopeState("President", PresidentialPowerUseState.CheckPartyViewState(result.selected))
+            is CheckPartySelected -> EnvelopeState(resourceManager.format(R.string.env_for_president, "ABC"), PresidentialPowerUseState.CheckPartyViewState(result.selected))
 
             PresidentialPowerDone -> nextRound()
         }

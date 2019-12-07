@@ -16,16 +16,14 @@ class ElectionManager(
     val state: ElectionState
         get() = ElectionState(failedElections, presidentCandidate, snapPresidentCandidate)
 
-    var failedElections: Int = failedElections
-        private set
+    private var failedElections: Int = failedElections
 
     private var snapPresidentCandidate: Player? = snapPresident
 
     var presidentCandidate = president
         private set
 
-    var lastElected: Government? = null
-        private set
+    private var lastElected: Government? = null
 
     fun nextPresidentCandidate(): Player = playerManager.nextLiving(presidentCandidate).apply {
         snapPresidentCandidate = null

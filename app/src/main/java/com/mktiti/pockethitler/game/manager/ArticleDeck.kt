@@ -24,12 +24,6 @@ class ArticleDeck(drawStack: List<Article>, discardStack: List<Article>) {
     val state: DeckState
         get() = DeckState(drawStack, discardStack)
 
-    val drawCount: Int
-        get() = drawStack.size
-
-    val discardCount: Int
-        get() = discardStack.size
-
     private fun draw(): Article = drawStack.removeAt(0)
 
     fun drawOne(): Article = draw().apply { shuffleIfNeeded() }

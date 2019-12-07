@@ -7,6 +7,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.ImageView
 import android.widget.LinearLayout
 import com.mktiti.pockethitler.game.PresidentialAction
+import com.mktiti.pockethitler.util.DefaultResourceManager
 import com.mktiti.pockethitler.view.card.ArticleHolderUiProvider
 import com.mktiti.pockethitler.view.card.ArticleUiProvider
 import com.mktiti.pockethitler.view.card.DefaultArticleHolderProvider
@@ -20,8 +21,8 @@ abstract class BoardViewBase(
     private val cardHolderSelector: ArticleHolderUiProvider.(PresidentialAction?, Boolean) -> Bitmap,
     context: Context) : LinearLayout(context) {
 
-    private val articleProvider: ArticleUiProvider = DefaultArticleProvider.forSize(320, 500)
-    private val holderProvider: ArticleHolderUiProvider = DefaultArticleHolderProvider.forSize(320, 500)
+    private val articleProvider: ArticleUiProvider = DefaultArticleProvider.forSize(320, 500) { DefaultResourceManager(resources) }
+    private val holderProvider: ArticleHolderUiProvider = DefaultArticleHolderProvider.forSize(320, 500) { DefaultResourceManager(resources) }
 
     protected inner class CardHolder(
         private val view: ImageView,

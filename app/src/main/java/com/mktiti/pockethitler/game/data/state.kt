@@ -2,6 +2,7 @@ package com.mktiti.pockethitler.game.data
 
 import com.mktiti.pockethitler.game.manager.ArticleDeck
 import com.mktiti.pockethitler.game.manager.PlayerManager
+import com.mktiti.pockethitler.util.ResourceManager
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 
@@ -51,7 +52,7 @@ data class GameState(
 
 }
 
-fun initNewState(players: List<String>): GameState {
+fun initNewState(players: List<String>, resourceManager: ResourceManager): GameState {
     val playerState = PlayerManager.randomSetup(players)
     val firstPresident = playerState.players.random().player
     return GameState(
@@ -61,8 +62,8 @@ fun initNewState(players: List<String>): GameState {
             deckState = ArticleDeck.newDeck(),
             boardsState = BoardsState()
         ),
-        // phaseState = startState(playerState.players.map { it.player })
+        phaseState = startState(playerState.players.map { it.player }, resourceManager)
         // For testing
-        phaseState = PhaseState.PresidentDiscardState(Triple(Article.LIBERAL, Article.FASCIST, Article.LIBERAL))
+        // phaseState = PhaseState.PresidentDiscardState(Triple(Article.LIBERAL, Article.FASCIST, Article.LIBERAL))
     )
 }

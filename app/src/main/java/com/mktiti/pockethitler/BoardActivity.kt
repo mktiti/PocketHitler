@@ -4,21 +4,21 @@ import android.os.Bundle
 import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
-import com.mktiti.pockethitler.game.manager.GameEngine
 import com.mktiti.pockethitler.game.data.GameState
+import com.mktiti.pockethitler.game.data.TableState
+import com.mktiti.pockethitler.game.manager.FascistBoard
+import com.mktiti.pockethitler.game.manager.GameEngine
+import com.mktiti.pockethitler.game.manager.PlayerCount
+import com.mktiti.pockethitler.util.DefaultResourceManager
 import com.mktiti.pockethitler.view.board.BoardFragment
 import org.jetbrains.anko.button
 import org.jetbrains.anko.linearLayout
-
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import com.mktiti.pockethitler.game.PresidentialAction
-import com.mktiti.pockethitler.game.data.TableState
-import com.mktiti.pockethitler.game.manager.FascistBoard
-import com.mktiti.pockethitler.game.manager.PlayerCount
+import org.jetbrains.anko.textResource
 
 const val STATE_KEY = "game-state"
 private const val DYN_FRAG_TAG = "dynamic-fragment"
@@ -50,7 +50,8 @@ class BoardActivity : AppCompatActivity() {
                 visibility = View.GONE
             }.lparams(width = 0, height = MATCH_PARENT, weight = 4f)
 
-            switchButton = button("Switch\nview") {
+            switchButton = button {
+                textResource = R.string.switch_frag_view
                 setOnClickListener { switchFrags() }
             }.lparams(width = 0, height = MATCH_PARENT, weight = 1F)
         }
@@ -68,7 +69,8 @@ class BoardActivity : AppCompatActivity() {
         engine = GameEngine(
             state,
             this::showMessage,
-            this::onPhaseFragment
+            this::onPhaseFragment,
+            DefaultResourceManager(resources)
         )
     }
 

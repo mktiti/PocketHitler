@@ -5,34 +5,34 @@ import android.os.Bundle
 import android.view.*
 import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.mktiti.pockethitler.R
 import com.mktiti.pockethitler.game.data.Article
 import com.mktiti.pockethitler.game.data.PhaseResult
 import com.mktiti.pockethitler.game.data.PhaseState
 import com.mktiti.pockethitler.util.Bi
+import com.mktiti.pockethitler.util.DefaultResourceManager
 import com.mktiti.pockethitler.view.card.ArticleUiProvider
 import com.mktiti.pockethitler.view.card.DefaultArticleProvider
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 
 abstract class ArticleDiscardFragment(
-    private val title: String,
+    private val titleRes: Int,
     protected val cards: List<Article>
 ) : Fragment() {
-
-    companion object {
-        private val articleProvider: ArticleUiProvider = DefaultArticleProvider.forSize(320, 500)
-    }
 
     protected val selectIndices = mutableSetOf<Int>()
 
     private lateinit var okButton: Button
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = UI {
+        val articleProvider = DefaultArticleProvider.forSize(320, 500) { DefaultResourceManager(resources) }
+
         verticalLayout {
             gravity = Gravity.CENTER_HORIZONTAL
             lparams(matchParent, matchParent)
 
-            textView(title) {
+            textView(titleRes) {
                 textSize = 20F
                 gravity = Gravity.CENTER_HORIZONTAL
                 setPadding(0, 50, 0, 50)
@@ -42,11 +42,11 @@ abstract class ArticleDiscardFragment(
                 linearLayout {
                     gravity = Gravity.CENTER_HORIZONTAL
                     cards.forEachIndexed { index, article ->
-                        articleHolder(article, index)
+                        articleHolder(articleProvider, article, index)
                     }
                 }.lparams(width = wrapContent)
 
-                okButton = button("OK") {
+                okButton = button(R.string.ok) {
                     isEnabled = false
                     setOnClickListener {
                         onOk()
@@ -60,7 +60,7 @@ abstract class ArticleDiscardFragment(
 
     protected abstract fun onOk()
 
-    private fun ViewManager.articleHolder(article: Article, index: Int) {
+    private fun ViewManager.articleHolder(articleProvider: ArticleUiProvider, article: Article, index: Int) {
         frameLayout {
             padding = 10
             imageView {
@@ -83,7 +83,7 @@ abstract class ArticleDiscardFragment(
 class PresidentDiscardFragment(
     state: PhaseState.PresidentDiscardState,
     private val resultCallback: (PhaseResult.PresidentDiscardResult) -> Unit
-) : ArticleDiscardFragment("Select article to pass", state.cards.toList()) {
+) : ArticleDiscardFragment(R.string.articles_to_pass, state.cards.toList()) {
 
     override fun onOk() {
         if (selectIndices.size == 2) {
@@ -101,7 +101,7 @@ class PresidentDiscardFragment(
 class ChancellorDiscardFragment(
     state: PhaseState.ChancellorDiscardState,
     private val resultCallback: (PhaseResult.ChancellorDiscardResult) -> Unit
-) : ArticleDiscardFragment("Select article to play", state.cards.toList()) {
+) : ArticleDiscardFragment(R.string.articles_to_play, state.cards.toList()) {
 
     override fun onOk() {
         selectIndices.firstOrNull()?.let { selected ->

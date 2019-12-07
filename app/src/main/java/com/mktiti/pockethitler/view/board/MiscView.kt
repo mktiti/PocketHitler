@@ -5,9 +5,14 @@ import android.view.Gravity
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
+import com.mktiti.pockethitler.R
+import com.mktiti.pockethitler.util.DefaultResourceManager
+import com.mktiti.pockethitler.util.ResourceManager
 import org.jetbrains.anko.textView
 
 class MiscView(context: Context) : LinearLayout(context) {
+
+    private val resourceManager: ResourceManager = DefaultResourceManager(context.resources)
 
     private val chancellorView: TextView
     private val electionTracker: TextView
@@ -46,28 +51,22 @@ class MiscView(context: Context) : LinearLayout(context) {
 
     fun setChancellor(name: String?) {
         chancellorView.text = if (name == null) {
-            "No Chancellor"
+            resourceManager[R.string.no_chancellor]
         } else {
-            "Chancellor: $name"
+            resourceManager.format(R.string.chancellor_is, name)
         }
     }
 
     fun setPresident(name: String?) {
         presidentView.text = if (name == null) {
-            "No President"
+            resourceManager[R.string.no_president]
         } else {
-            "President: $name"
+            resourceManager.format(R.string.president_is, name)
         }
     }
 
     fun setFailedElections(count: Int) {
-        electionTracker.text = "Election tracker: " +
-        (
-                generateSequence { "○" }.take(count) +
-                listOf("●") +
-                generateSequence { "○" }.take(2 - count)
-
-        ).joinToString(" - ")
+        electionTracker.text = resourceManager.resources(R.array.election_tracker).getOrNull(count) ?: ""
     }
 
 }

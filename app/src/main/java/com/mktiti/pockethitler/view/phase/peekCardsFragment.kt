@@ -3,6 +3,7 @@ package com.mktiti.pockethitler.view.phase
 import android.os.Bundle
 import android.view.*
 import androidx.fragment.app.Fragment
+import com.mktiti.pockethitler.R
 import com.mktiti.pockethitler.game.data.Article
 import com.mktiti.pockethitler.game.data.PhaseResult
 import com.mktiti.pockethitler.game.data.PhaseState
@@ -22,7 +23,7 @@ class PeekCardsFragment(
             gravity = Gravity.CENTER
             lparams(matchParent, matchParent)
 
-            textView("Next 3 cards")
+            textView(R.string.next_3_articles)
 
             state.cards.apply {
                 article(first)
@@ -30,14 +31,19 @@ class PeekCardsFragment(
                 article(third)
             }
 
-            button("OK").setOnClickListener {
+            button(R.string.ok).setOnClickListener {
                 resultCallback(PhaseResult.PresidentialPowerDone)
             }
         }
     }.view
 
     private fun ViewManager.article(article: Article) {
-        textView(if (article == Article.LIBERAL) "Liberal" else "Fascist")
+        textView(
+            when (article) {
+                Article.LIBERAL -> R.string.liberal
+                Article.FASCIST -> R.string.fascist
+            }
+        )
     }
 
 }

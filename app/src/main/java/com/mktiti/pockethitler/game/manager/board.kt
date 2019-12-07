@@ -61,7 +61,7 @@ class FascistBoard(
     val isVetoEnabled: Boolean
         get() = count >= 5
 
-    override fun place(): PresidentialAction? = actions[++count]
+    override fun place(): PresidentialAction? = actions[count++]
 
 }
 

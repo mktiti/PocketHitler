@@ -66,7 +66,7 @@ class PlayerManager(players: List<PlayerData>) {
         return player.identity == HITLER
     }
 
-    fun nextFiltered(current: Player, predicate: (PlayerData) -> Boolean): Player {
+    private fun nextFiltered(current: Player, predicate: (PlayerData) -> Boolean): Player {
         var index = index(current)
 
         forever {
@@ -79,7 +79,5 @@ class PlayerManager(players: List<PlayerData>) {
     }
 
     fun nextLiving(current: Player): Player = nextFiltered(current) { it.alive }
-
-    fun randomPlayer(): Player = allPlayers.random().player
 
 }
