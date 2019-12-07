@@ -38,18 +38,23 @@ abstract class ArticleDiscardFragment(
                 setPadding(0, 50, 0, 50)
             }
 
-            linearLayout {
-                gravity = Gravity.CENTER_HORIZONTAL
-                cards.forEachIndexed { index, article ->
-                    articleHolder(article, index)
-                }
-            }
+            verticalLayout {
+                linearLayout {
+                    gravity = Gravity.CENTER_HORIZONTAL
+                    cards.forEachIndexed { index, article ->
+                        articleHolder(article, index)
+                    }
+                }.lparams(width = wrapContent)
 
-            okButton = button("OK") {
-                isEnabled = false
-                setOnClickListener {
-                    onOk()
-                }
+                okButton = button("OK") {
+                    setPadding(0, 20, 0, 0)
+                    isEnabled = false
+                    setOnClickListener {
+                        onOk()
+                    }
+                }.lparams(width = matchParent)
+            }.lparams(width = wrapContent) {
+                gravity = Gravity.CENTER_HORIZONTAL
             }
         }
     }.view
