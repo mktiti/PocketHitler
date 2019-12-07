@@ -15,59 +15,11 @@ import com.mktiti.pockethitler.view.card.DefaultArticleProvider
 import org.jetbrains.anko.imageView
 import org.jetbrains.anko.verticalLayout
 
-class FascistBoardView(context: Context) : LinearLayout(context) {
-
-    private val articleProvider: ArticleUiProvider = DefaultArticleProvider.forSize(320, 500)
-    private val holderProvider: ArticleHolderUiProvider = DefaultArticleHolderProvider.forSize(320, 500)
-
-    private inner class CardHolder(
-        private val view: ImageView,
-        private val last: Boolean = false
-    ) {
-        init {
-            noCard(null)
-        }
-
-        fun noCard(presidentialAction: PresidentialAction?) {
-            view.setImageBitmap(holderProvider.fascistHolder(presidentialAction, last))
-        }
-
-        fun addArticle() {
-            view.setImageBitmap(articleProvider.fascistArticle())
-        }
-    }
-
-    private val holders: List<CardHolder>
-
-    init {
-        orientation = HORIZONTAL
-        layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT, 1F)
-        gravity = Gravity.CENTER
-        val cardCount = FascistBoard.actions(PlayerCount.MANY).size
-        weightSum = cardCount.toFloat()
-
-        holders = ArrayList<CardHolder>(cardCount).apply {
-            repeat(cardCount) { i ->
-                verticalLayout {
-                    gravity = Gravity.CENTER
-                    add(CardHolder(imageView(), i == cardCount - 1))
-                    layoutParams = generateDefaultLayoutParams().apply {
-                        weight = 1F
-                    }
-                }
-            }
-        }
-    }
+class FascistBoardView(context: Context) : BoardViewBase(6, ArticleUiProvider::fascistArticle, ArticleHolderUiProvider::fascistHolder, context) {
 
     fun setBoard(fascistPowers: List<PresidentialAction?>) {
         holders.zip(fascistPowers).forEach { (holder, action) ->
             holder.noCard(action)
-        }
-    }
-
-    fun setState(cardCount: Int) {
-        holders.take(cardCount).forEach {
-            it.addArticle()
         }
     }
 

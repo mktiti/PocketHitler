@@ -8,6 +8,7 @@ import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.modules.SerializersModule
+import com.mktiti.pockethitler.game.data.PhaseState.*
 
 fun startState(players: List<Player>): PhaseState =
     PhaseState.EnvelopeState(
@@ -21,18 +22,18 @@ fun startState(players: List<Player>): PhaseState =
 
 private val phaseModule = SerializersModule {
     polymorphic<PhaseState> {
-        PhaseState.EnvelopeState::class with PhaseState.EnvelopeState.serializer()
-        PhaseState.IdentityInfoState::class with PhaseState.IdentityInfoState.serializer()
-        PhaseState.ChancellorSelectState::class with PhaseState.ChancellorSelectState.serializer()
-        PhaseState.VoteState::class with PhaseState.VoteState.serializer()
-        PhaseState.ChancellorDiscardState::class with PhaseState.ChancellorDiscardState.serializer()
-        PhaseState.PresidentDiscardState::class with PhaseState.PresidentDiscardState.serializer()
-        PhaseState.VetoConfirmState::class with PhaseState.VetoConfirmState.serializer()
-        PhaseState.PresidentialPowerUseState.PeekCardsState::class with PhaseState.PresidentialPowerUseState.PeekCardsState.serializer()
-        PhaseState.PresidentialPowerUseState.CheckPartySelectState::class with PhaseState.PresidentialPowerUseState.CheckPartySelectState.serializer()
-        PhaseState.PresidentialPowerUseState.CheckPartyViewState::class with PhaseState.PresidentialPowerUseState.CheckPartyViewState.serializer()
-        PhaseState.PresidentialPowerUseState.KillState::class with PhaseState.PresidentialPowerUseState.KillState.serializer()
-        PhaseState.GameWon::class with PhaseState.GameWon.serializer()
+        EnvelopeState::class with EnvelopeState.serializer()
+        IdentityInfoState::class with IdentityInfoState.serializer()
+        ChancellorSelectState::class with ChancellorSelectState.serializer()
+        VoteState::class with VoteState.serializer()
+        ChancellorDiscardState::class with ChancellorDiscardState.serializer()
+        PresidentDiscardState::class with PresidentDiscardState.serializer()
+        VetoConfirmState::class with VetoConfirmState.serializer()
+        PresidentialPowerUseState.PeekCardsState::class with PresidentialPowerUseState.PeekCardsState.serializer()
+        PresidentialPowerUseState.CheckPartySelectState::class with PresidentialPowerUseState.CheckPartySelectState.serializer()
+        PresidentialPowerUseState.CheckPartyViewState::class with PresidentialPowerUseState.CheckPartyViewState.serializer()
+        PresidentialPowerUseState.KillState::class with PresidentialPowerUseState.KillState.serializer()
+        GameWon::class with GameWon.serializer()
     }
 }
 

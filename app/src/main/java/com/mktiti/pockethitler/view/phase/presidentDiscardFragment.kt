@@ -47,7 +47,6 @@ abstract class ArticleDiscardFragment(
                 }.lparams(width = wrapContent)
 
                 okButton = button("OK") {
-                    setPadding(0, 20, 0, 0)
                     isEnabled = false
                     setOnClickListener {
                         onOk()

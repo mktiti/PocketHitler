@@ -7,6 +7,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import com.mktiti.pockethitler.game.data.DeckState
 import org.jetbrains.anko.textView
+import org.jetbrains.anko.wrapContent
 
 class DeckView(context: Context) : LinearLayout(context) {
 
@@ -16,10 +17,19 @@ class DeckView(context: Context) : LinearLayout(context) {
         orientation = VERTICAL
         layoutParams = LayoutParams(MATCH_PARENT, MATCH_PARENT, 1F)
         gravity = Gravity.CENTER
+        setPadding(10, 0, 10, 0)
 
-        textView("Remaining:")
+        textView("Remaining:") {
+            layoutParams = generateDefaultLayoutParams().apply {
+                width = wrapContent
+            }
+        }
         remainingText = textView {
             textSize += 10
+            gravity = Gravity.CENTER_HORIZONTAL
+            layoutParams = generateDefaultLayoutParams().apply {
+                width = wrapContent
+            }
         }
 
     }

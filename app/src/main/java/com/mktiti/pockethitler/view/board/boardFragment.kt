@@ -18,23 +18,31 @@ class BoardFragment : Fragment() {
 
     private lateinit var deckView: DeckView
     private lateinit var liberalBoardView: LiberalBoardView
+    private lateinit var miscView: MiscView
     private lateinit var fascistBoardView: FascistBoardView
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = UI {
         verticalLayout {
+            setPadding(10, 10, 10, 10)
             gravity = Gravity.CENTER
             lparams(matchParent, matchParent)
-            weightSum = 2F
+            weightSum = 9F
 
             linearLayout {
                 fascistBoardView = ankoView(::FascistBoardView, 0) {}
-            }.lparams(matchParent, matchParent, 1F)
+            }.lparams(matchParent, 0, 4F)
+
+            miscView = ankoView(::MiscView, 0) {}.lparams(matchParent, 0, 1F)
 
             linearLayout {
+                weightSum = 6F
+
                 deckView = ankoView(::DeckView, 0) {}
+                    .lparams(width = 0, height = matchParent, weight = 1F)
 
                 liberalBoardView = ankoView(::LiberalBoardView, 0) {}
-            }.lparams(matchParent, matchParent, 1F)
+                    .lparams(width = 0, height = matchParent, weight = 5F)
+            }.lparams(matchParent, 0, 4F)
 
         }
     }.view
@@ -47,6 +55,10 @@ class BoardFragment : Fragment() {
         deckView.setState(tableState.deckState)
         liberalBoardView.setState(tableState.boardsState.liberalCards)
         fascistBoardView.setState(tableState.boardsState.fascistCards)
+
+        // miscView.setPresident(tableState.electionState.)
+        // miscView.setPresident(tableState.playersState.)
+        miscView.setFailedElections(tableState.electionState.failedElections)
     }
 
 }
