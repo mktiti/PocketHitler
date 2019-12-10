@@ -1,7 +1,8 @@
 package com.mktiti.pockethitler.game.data
 
 import com.mktiti.pockethitler.R
-import com.mktiti.pockethitler.game.data.PhaseState.*
+import com.mktiti.pockethitler.game.data.PhaseState.EnvelopeState
+import com.mktiti.pockethitler.game.data.PhaseState.IdentityInfoState
 import com.mktiti.pockethitler.game.data.PlayerIdentity.FASCIST
 import com.mktiti.pockethitler.game.data.PlayerIdentity.HITLER
 import com.mktiti.pockethitler.util.Bi
@@ -9,8 +10,6 @@ import com.mktiti.pockethitler.util.ResourceManager
 import com.mktiti.pockethitler.util.Tri
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
 
 fun startState(players: List<Player>, resourceManager: ResourceManager): PhaseState =
     EnvelopeState(
@@ -21,25 +20,6 @@ fun startState(players: List<Player>, resourceManager: ResourceManager): PhaseSt
             fascistNames = players.filter { it.identity == FASCIST }.map { it.name }
         )
     )
-
-private val phaseModule = SerializersModule {
-    polymorphic<PhaseState> {
-        EnvelopeState::class with EnvelopeState.serializer()
-        IdentityInfoState::class with IdentityInfoState.serializer()
-        ChancellorSelectState::class with ChancellorSelectState.serializer()
-        VoteState::class with VoteState.serializer()
-        ChancellorDiscardState::class with ChancellorDiscardState.serializer()
-        PresidentDiscardState::class with PresidentDiscardState.serializer()
-        VetoConfirmState::class with VetoConfirmState.serializer()
-        PresidentialPowerUseState.PeekCardsState::class with PresidentialPowerUseState.PeekCardsState.serializer()
-        PresidentialPowerUseState.CheckPartySelectState::class with PresidentialPowerUseState.CheckPartySelectState.serializer()
-        PresidentialPowerUseState.CheckPartyViewState::class with PresidentialPowerUseState.CheckPartyViewState.serializer()
-        PresidentialPowerUseState.KillState::class with PresidentialPowerUseState.KillState.serializer()
-        GameWon::class with GameWon.serializer()
-    }
-}
-
-val phaseJson = Json(context = phaseModule)
 
 @Serializable
 sealed class PhaseState {

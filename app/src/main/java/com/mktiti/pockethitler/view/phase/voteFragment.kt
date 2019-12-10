@@ -52,7 +52,12 @@ class VoteFragment(
         val voteState = state.addVote(vote)
         val result = voteState.result()
         return if (result == null) {
-            resultCallback(PhaseResult.PlainStateResult(EnvelopeState(resourceManager.format(R.string.env_general, state.nextVoter().name), voteState)))
+            resultCallback(PhaseResult.PlainStateResult(
+                nestedPhase = EnvelopeState(
+                    message = resourceManager.format(R.string.env_general, voteState.nextVoter().name),
+                    nestedState = voteState)
+                )
+            )
         } else {
             resultCallback(result)
         }

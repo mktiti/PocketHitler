@@ -12,7 +12,10 @@ private const val PLAYERS_KEY = "selectablePlayers"
 class StartActivity : AppCompatActivity() {
 
     //private val selectablePlayers = mutableListOf<String>()
-    private val players = (0 .. 7).map { "Player #$it" }
+    //private val players = (0 .. 7).map { "Player #$it" }
+    private val players = listOf(
+        "Titi", "Peti", "Máté", "Benő", "Juhász", "Patrik", "Roli"
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

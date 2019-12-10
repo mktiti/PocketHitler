@@ -1,5 +1,6 @@
 package com.mktiti.pockethitler.game.manager
 
+import android.util.Log
 import androidx.fragment.app.Fragment
 import com.mktiti.pockethitler.R
 import com.mktiti.pockethitler.game.PresidentialAction
@@ -56,28 +57,43 @@ class GameEngine(
                 message = resourceManager.format(R.string.env_general, playerManager.livingPlayers.first().name),
                 nestedState = VoteState(
                     candidates = Government(
-                        president = electionManager.presidentCandidate,
+                        president = electionManager.currentPresCandidate()!!,
                         chancellor = result.chancellor
                     ), futureVotes = playerManager.livingPlayers
                 )
             )
 
             is VoteResult -> {
-                messageCallback(resourceManager.format(R.string.vote_result, result.jas, result.neins))
+                messageCallback(when (result.elected) {
+                    null -> resourceManager.format(
+                                R.string.vote_result_fail,
+                                result.jas.map(Player::name),
+                                result.neins.map(Player::name)
+                    )
+                    else -> resourceManager.format(
+                                R.string.vote_result_succ,
+                                result.jas.map(Player::name),
+                                result.neins.map(Player::name),
+                                result.elected.president.name,
+                                result.elected.chancellor.name
+                    )
+                })
+
                 if (result.elected == null) {
                     if (electionManager.unsuccessful()) {
                         val article = deck.drawOne()
                         boards.place(article)
 
                         when (boards.finished) {
-                            Article.LIBERAL -> GameWon(Party.LIBERAL)
-                            Article.FASCIST -> GameWon(Party.FASCIST)
+                            Article.LIBERAL -> winByArticle(Party.LIBERAL)
+                            Article.FASCIST -> winByArticle(Party.FASCIST)
                             null -> ChancellorSelectState(electionManager.possibleChancellors())
                         }
                     } else {
                         ChancellorSelectState(electionManager.possibleChancellors())
                     }
                 } else if (result.elected.chancellor.identity == PlayerIdentity.HITLER && boards.inRedZone) {
+                    messageCallback(resourceManager.format(R.string.fash_win_by_hitler, result.elected.chancellor.name))
                     GameWon(Party.FASCIST)
                 } else {
                     electionManager.elect(result.elected)
@@ -87,11 +103,14 @@ class GameEngine(
 
             is PresidentDiscardResult -> {
                 deck.discard(result.discarded)
-                EnvelopeState(resourceManager.format(R.string.env_for_chancellor, "XY"), ChancellorDiscardState(result.forwarded, boards.isVetoEnabled))
+                EnvelopeState(resourceManager.format(R.string.env_for_chancellor, electionManager.currentGov()?.chancellor?.name!!), ChancellorDiscardState(result.forwarded, boards.isVetoEnabled))
             }
 
             is ChancellorDiscardResult -> {
                 deck.discard(result.discarded)
+
+                messageCallback(result.placed.name)
+
                 when (boards.place(result.placed)) {
                     PresidentialAction.CHECK_PARTY -> PresidentialPowerUseState.CheckPartySelectState(playerManager.livingPlayers)
                     PresidentialAction.SNAP_ELECTION -> PresidentialPowerUseState.SnapSelectState(playerManager.livingPlayers)
@@ -99,8 +118,8 @@ class GameEngine(
                     PresidentialAction.KILL -> KillState(playerManager.livingPlayers)
                     null -> {
                         when (boards.finished) {
-                            Article.LIBERAL -> GameWon(Party.LIBERAL)
-                            Article.FASCIST -> GameWon(Party.FASCIST)
+                            Article.LIBERAL -> winByArticle(Party.LIBERAL)
+                            Article.FASCIST -> winByArticle(Party.FASCIST)
                             null -> nextRound()
                         }
                     }
@@ -110,7 +129,10 @@ class GameEngine(
             is Veto -> VetoConfirmState(result.cards)
 
             is KillTargetSelected -> {
+                messageCallback(resourceManager.format(R.string.player_killed, result.toKill.name))
+
                 if (playerManager.kill(result.toKill)) {
+                    messageCallback(resourceManager.format(R.string.lib_win_by_assassination, result.toKill.name))
                     GameWon(Party.LIBERAL)
                 } else {
                     nextRound()
@@ -122,13 +144,25 @@ class GameEngine(
                 ChancellorSelectState(electionManager.possibleChancellors())
             }
 
-            is CheckPartySelected -> EnvelopeState(resourceManager.format(R.string.env_for_president, "ABC"), PresidentialPowerUseState.CheckPartyViewState(result.selected))
+            is CheckPartySelected -> EnvelopeState(
+                message = resourceManager.format(R.string.env_for_president, electionManager.currentGov()?.president?.name!!),
+                nestedState = PresidentialPowerUseState.CheckPartyViewState(result.selected)
+            )
 
             PresidentialPowerDone -> nextRound()
         }
 
-        messageCallback("New State is: $phaseState")
+        Log.i("Engine state", "New State is: $phaseState")
         stateChangeCallback(currentState().tableState, fragmentOfPhase(phaseState))
+    }
+
+    private fun winByArticle(party: Party): PhaseState {
+        val message = resourceManager[when (party) {
+            Party.LIBERAL -> R.string.lib_win_by_articles
+            Party.FASCIST -> R.string.fash_win_by_articles
+        }]
+        messageCallback(message)
+        return GameWon(party)
     }
 
     private fun nextRound(): ChancellorSelectState {

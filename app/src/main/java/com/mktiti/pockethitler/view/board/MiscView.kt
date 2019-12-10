@@ -6,8 +6,11 @@ import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
 import com.mktiti.pockethitler.R
+import com.mktiti.pockethitler.game.data.ElectedStatus
+import com.mktiti.pockethitler.game.data.ElectionState
 import com.mktiti.pockethitler.util.DefaultResourceManager
 import com.mktiti.pockethitler.util.ResourceManager
+import org.jetbrains.anko.textResource
 import org.jetbrains.anko.textView
 
 class MiscView(context: Context) : LinearLayout(context) {
@@ -43,30 +46,30 @@ class MiscView(context: Context) : LinearLayout(context) {
                 weight = 1F
             }
         }
-
-        setChancellor(null)
-        setPresident(null)
-        setFailedElections(0)
     }
 
-    fun setChancellor(name: String?) {
-        chancellorView.text = if (name == null) {
-            resourceManager[R.string.no_chancellor]
-        } else {
-            resourceManager.format(R.string.chancellor_is, name)
+    fun setState(electionState: ElectionState) {
+        electionTracker.text = resourceManager.resources(R.array.election_tracker)[electionState.failedElections]
+
+        when (electionState.electedStatus) {
+            is ElectedStatus.InSession -> {
+                with(electionState.electedStatus.government) {
+                    presidentView.text = resourceManager.format(R.string.president_is, president.name)
+                    chancellorView.text = resourceManager.format(R.string.chancellor_is, chancellor.name)
+                }
+            }
+            is ElectedStatus.VotingState -> {
+                with(electionState.electedStatus) {
+                    val toShow = if (this is ElectedStatus.VotingState.SnapElection) {
+                        "${presidentCandidate.name} (from ${jumpedFrom.name})"
+                    } else {
+                        presidentCandidate.name
+                    }
+                    presidentView.text = resourceManager.format(R.string.president_candidate_is_tracker, toShow)
+                }
+                chancellorView.textResource = R.string.no_chancellor
+            }
         }
-    }
-
-    fun setPresident(name: String?) {
-        presidentView.text = if (name == null) {
-            resourceManager[R.string.no_president]
-        } else {
-            resourceManager.format(R.string.president_is, name)
-        }
-    }
-
-    fun setFailedElections(count: Int) {
-        electionTracker.text = resourceManager.resources(R.array.election_tracker).getOrNull(count) ?: ""
     }
 
 }

@@ -21,6 +21,10 @@ class ArticleDeck(drawStack: List<Article>, discardStack: List<Article>) {
 
     constructor(state: DeckState) : this(state.drawStack, state.discardStack)
 
+    init {
+        require(drawStack.size >= 3) { "Draw stack must always have at least three articles!" }
+    }
+
     val state: DeckState
         get() = DeckState(drawStack, discardStack)
 

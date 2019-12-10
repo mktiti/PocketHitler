@@ -16,9 +16,7 @@ import com.mktiti.pockethitler.game.manager.GameEngine
 import com.mktiti.pockethitler.game.manager.PlayerCount
 import com.mktiti.pockethitler.util.DefaultResourceManager
 import com.mktiti.pockethitler.view.board.BoardFragment
-import org.jetbrains.anko.button
-import org.jetbrains.anko.linearLayout
-import org.jetbrains.anko.textResource
+import org.jetbrains.anko.*
 
 const val STATE_KEY = "game-state"
 private const val DYN_FRAG_TAG = "dynamic-fragment"
@@ -94,6 +92,15 @@ class BoardActivity : AppCompatActivity() {
 
     private fun showMessage(message: String) {
         Log.i("Game Message", message)
+
+        alert {
+            isCancelable = false
+            this.message = message
+            okButton {
+                it.dismiss()
+            }
+            show()
+        }
     }
 
     private fun onPhaseFragment(tableState: TableState, phaseFragment: Fragment?) {

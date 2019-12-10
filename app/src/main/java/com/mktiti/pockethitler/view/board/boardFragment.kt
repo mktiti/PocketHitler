@@ -56,9 +56,7 @@ class BoardFragment : Fragment() {
         liberalBoardView.setState(tableState.boardsState.liberalCards)
         fascistBoardView.setState(tableState.boardsState.fascistCards)
 
-        // miscView.setPresident(tableState.electionState.)
-        // miscView.setPresident(tableState.playersState.)
-        miscView.setFailedElections(tableState.electionState.failedElections)
+        miscView.setState(tableState.electionState)
     }
 
 }

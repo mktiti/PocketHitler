@@ -15,6 +15,7 @@ import com.mktiti.pockethitler.view.card.DefaultArticleHelper.libPaint
 import com.mktiti.pockethitler.view.card.DefaultArticleHelper.maxTextSize
 import com.mktiti.pockethitler.view.card.DefaultArticleHelper.whitePaint
 import com.mktiti.pockethitler.view.card.DefaultArticleHelper.writeToCanvasMiddle
+import kotlin.math.roundToInt
 
 interface ArticleHolderUiProvider {
 
@@ -38,6 +39,13 @@ class DefaultArticleHolderProvider(
             DefaultArticleHolderProvider(it.first, it.second, resourceManager())
         }
 
+        private fun calcDash(length: Float, width: Float): DashPathEffect {
+            val periodInitLen = 2 * width
+            val times: Int = (length / periodInitLen).roundToInt()
+            val remnant: Float = length - periodInitLen * times
+            val spaceLen = width + remnant / times
+            return DashPathEffect(floatArrayOf(width, spaceLen), 0F)
+        }
     }
 
     private val victoryText = resourceManager[R.string.victory]
@@ -58,6 +66,9 @@ class DefaultArticleHolderProvider(
 
     private val borderWidth: Float = 0.1F * width
 
+    private val narrowDash = calcDash(widthF, borderWidth)
+    private val longDash = calcDash(height - 2F * borderWidth, borderWidth)
+/*
     private val borderLines = floatArrayOf(
         0F, 0F,
         widthF, 0F,
@@ -68,6 +79,8 @@ class DefaultArticleHolderProvider(
         0F, heightF - borderWidth,
         0F, borderWidth
     )
+
+ */
 
     private val fontSize: Float = maxTextSize(0.7F * width, allTexts)
 
@@ -84,13 +97,21 @@ class DefaultArticleHolderProvider(
     private val fashEndHolder: Bitmap = createHolder(victoryText, fashPaint, inverted = true)
 
     private fun createHolder(text: String, paint: Paint, inverted: Boolean = false) = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888).applyCanvas {
-        val borderPaint = Paint(paint).apply {
-            pathEffect = DashPathEffect(floatArrayOf(borderWidth, borderWidth), 0F)
+        with(Paint(paint)) {
+            pathEffect = narrowDash
             strokeWidth = 2F * borderWidth
+
+            drawLine(0F, 0F, widthF, 0F, this)
+            drawLine(widthF, heightF, 0F, heightF, this)
         }
 
-        drawRect(0F, 0F, widthF, heightF, whitePaint)
-        drawLines(borderLines, borderPaint)
+        with(Paint(paint)) {
+            pathEffect = longDash
+            strokeWidth = 2F * borderWidth
+
+            drawLine(widthF, borderWidth, widthF, heightF - borderWidth, this)
+            drawLine(0F, heightF - borderWidth, 0F, borderWidth, this)
+        }
 
         val (bgPaint, textPaint, borderWidth: Float) = if (inverted) {
             drawRect(borderWidth, borderWidth, width - borderWidth, height - borderWidth, whitePaint)

@@ -5,7 +5,8 @@
 
     <string name="env_secret_id">Secret identity of %1$s</string>
     <string name="env_general">Only for %1$s</string>
-    <string name="vote_result">Vote results: \'Ja\'s: %1$s, \'Nein\'s: %2$s</string>
+    <string name="vote_result_succ">Election successful:\n\'Ja\'s: %1$s, \'Nein\'s: %2$s\nNew President:%3$s, Chancellor: %4$s</string>
+    <string name="vote_result_fail">Election failed:\n\'Ja\'s: %3$s, \'Nein\'s: %4$s\n%5$s</string>
     <string name="articles_for">Articles for %1$s</string>
     <string name="env_for_chancellor">Only for Chancellor %1$s</string>
     <string name="president_peek">President peek cards</string>
@@ -17,6 +18,7 @@
     <string name="no_president">No President</string>
     <string name="chancellor_is">Chancellor: %1$s</string>
     <string name="president_is">President: %1$s</string>
+    <string name="president_candidate_is_tracker">President candidate: %1$s</string>
 
     <string-array name="election_tracker">
         <item>Election tracker: ● - ○ - ○</item>
@@ -51,6 +53,7 @@
     <string name="select_to_inspect">Select player to inspect</string>
     <string name="select_snap">Select presidential candidate for snap election</string>
     <string name="select_to_kill">Select player to kill</string>
+    <string name="player_killed">%1$s killed!</string>
     <string name="allowed_selectable">Allowed players:</string>
     <string name="allowed_candidates">Allowed nominees:</string>
     <string name="veto_confirm_title">Confirm veto?</string>
@@ -61,5 +64,11 @@
     <string name="nein">Nein</string>
     <string name="pres_candidate_is">President candidate is: %1$s</string>
     <string name="chancellor_candidate_is">Chancellor candidate is: %1$s</string>
+
+    <string name="fash_win_by_articles">Fascists win by playing 6 fascist articles!</string>
+    <string name="fash_win_by_hitler">Fascists win by electing Hitler (%1$s) to Chancellor!</string>
+
+    <string name="lib_win_by_articles">Liberals win by playing 5 liberal articles!</string>
+    <string name="lib_win_by_assassination">Liberals win by assassinating Hitler (%1$s)!</string>
 
 </resources>
