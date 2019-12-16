@@ -11,8 +11,13 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
-
-        <activity android:name=".StartActivity">
+        <activity
+                android:name=".PlayerSetupActivity"
+                android:label="@string/new_game_setup_label"
+                android:screenOrientation="portrait" />
+        <activity
+                android:name=".StartActivity"
+                android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

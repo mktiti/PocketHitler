@@ -1,38 +1,233 @@
 package com.mktiti.pockethitler
 
+import android.content.Context
+import android.graphics.Typeface
+import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
-import android.os.PersistableBundle
+import android.text.format.DateUtils
+import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.mktiti.pockethitler.game.data.GameInfo
+import com.mktiti.pockethitler.game.data.identificationState
 import com.mktiti.pockethitler.game.data.initNewState
 import com.mktiti.pockethitler.util.DefaultResourceManager
+import com.mktiti.pockethitler.util.ResourceManager
 import org.jetbrains.anko.*
+import org.jetbrains.anko.recyclerview.v7.recyclerView
+import java.time.LocalDateTime
+import java.time.ZoneOffset
+import java.util.*
 
-private const val PLAYERS_KEY = "selectablePlayers"
+private class GameView : AnkoComponent<ViewGroup> {
 
-class StartActivity : AppCompatActivity() {
+    companion object {
+        const val dateId = 1
+        const val descriptionId = 2
+    }
 
-    //private val selectablePlayers = mutableListOf<String>()
-    //private val players = (0 .. 7).map { "Player #$it" }
-    private val players = listOf(
-        "Titi", "Peti", "Máté", "Benő", "Juhász", "Patrik", "Roli"
-    )
+    override fun createView(ui: AnkoContext<ViewGroup>): View = with(ui) {
+        verticalLayout {
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+            setPadding(20, 20, 20, 20)
 
-        linearLayout {
-            button {
-                textResource = R.string.start
-            }.setOnClickListener {
-                startActivity(intentFor<BoardActivity>(
-                    STATE_KEY to initNewState(players, DefaultResourceManager(resources)).stringify()
-                ).singleTop())
+            background = GradientDrawable().apply {
+                shape = GradientDrawable.RECTANGLE
+                val color = resources.getColor(R.color.savedGameContainer, null)
+                setStroke(2, color)
+                setColor(color)
+                padding = 25
+                cornerRadius = 25F
+            }
+
+            textView {
+                id = dateId
+                textSize = 20F
+            }.lparams(width = matchParent, height = wrapContent)
+            textView("=") {
+                id = descriptionId
+                textSize = 15F
+            }.lparams(width = matchParent, height = wrapContent)
+
+            layoutParams = RecyclerView.LayoutParams(matchParent, wrapContent)
+        }
+    }
+
+}
+
+private class GameAdapter(
+    games: List<GameInfo> = emptyList(),
+    private val onItemClick: (View) -> Unit,
+    private val context: Context,
+    private val resourceManager: ResourceManager
+) : RecyclerView.Adapter<GameAdapter.GameViewHolder>() {
+
+    private val games: MutableList<GameInfo> = games.toMutableList()
+
+    inner class GameViewHolder(playerView: View): RecyclerView.ViewHolder(playerView) {
+
+        var dateView: TextView = playerView.findViewById(GameView.dateId)
+
+        var descriptionView: TextView = playerView.findViewById(GameView.descriptionId)
+
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GameViewHolder {
+        val view = GameView().createView(AnkoContext.Companion.create(parent.context, parent))
+        view.setOnClickListener {
+            onItemClick(view)
+        }
+
+        return GameViewHolder(view)
+    }
+
+    override fun getItemCount() = games.size
+
+    override fun onBindViewHolder(holder: GameViewHolder, position: Int) {
+        val game = games[position]
+
+        val playerState = game.state.tableState.playersState
+        val playerCount = playerState.players.size
+        val deadCount = playerState.players.count { !it.alive }
+
+        holder.apply {
+            dateView.text = DateUtils.getRelativeDateTimeString(
+                context,
+                game.creationDate.toInstant(ZoneOffset.UTC).toEpochMilli(),
+                DateUtils.MINUTE_IN_MILLIS,
+                DateUtils.WEEK_IN_MILLIS,
+                0
+            )
+            descriptionView.text = if (deadCount == 0) {
+                resourceManager.format(R.string.player_count_no_dead, playerCount)
+            } else {
+                resourceManager.format(R.string.player_count, playerCount, deadCount)
             }
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
-        super.onSaveInstanceState(outState, outPersistentState)
-        outState.putStringArrayList(PLAYERS_KEY, ArrayList(players))
+    fun setGames(games: List<GameInfo>) {
+        this.games.clear()
+        this.games.addAll(games)
+        notifyDataSetChanged()
     }
+
+    operator fun get(childItemId: Int): GameInfo? = games.getOrNull(childItemId)
+
+}
+
+class StartActivity : AppCompatActivity() {
+
+    private lateinit var resourceManager: ResourceManager
+
+    private lateinit var savedView: RecyclerView
+    private lateinit var gameAdapter: GameAdapter
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        resourceManager = DefaultResourceManager(resources)
+
+        gameAdapter = GameAdapter(
+            games = listOf(
+                GameInfo(
+                    state = initNewState(
+                        players = listOf("Titi", "Kriszu", "Krisztián", "Chris", "Szőlősi"),
+                        resourceManager = resourceManager
+                    ),
+                    creationDate = LocalDateTime.now(ZoneOffset.UTC).minusHours(Random().nextInt(30).toLong())
+                )
+            ),
+            onItemClick = this::onSavedOpen,
+            resourceManager = resourceManager,
+            context = this
+        )
+
+        verticalLayout {
+            padding = dip(20)
+
+            button(R.string.start_new) {
+                padding = dip(20)
+                backgroundColorResource = R.color.newGameContainer
+            }.setOnClickListener {
+                startActivity(intentFor<PlayerSetupActivity>().singleTop())
+            }
+
+            textView(R.string.saved_games) {
+                setPadding(0, 25, 0, 15)
+                textSize = 25F
+            }
+
+            savedView = recyclerView {
+                layoutManager = LinearLayoutManager(context)
+                adapter = gameAdapter
+            }.lparams(width = matchParent, height = matchParent)
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+    }
+
+    private fun onSavedOpen(gameView: View) {
+        val game = gameAdapter[savedView.getChildAdapterPosition(gameView)] ?: return
+        val players = game.state.tableState.playersState.players
+
+        alert {
+            var showIdsCheck: (() -> Boolean)? = null
+            titleResource = R.string.open_saved
+            customView {
+                verticalLayout {
+                    padding = dip(20)
+                    textView(R.string.players_title) {
+                        setTypeface(typeface, Typeface.BOLD)
+                    }
+
+                    players.forEach { p ->
+                        textView {
+                            text = if (p.alive) {
+                                p.player.name
+                            } else {
+                                resourceManager.format(R.string.player_dead, p.player.name)
+                            }
+                        }
+                    }
+
+                    checkBox(R.string.show_identities) {
+                        isChecked = true
+                        showIdsCheck = this::isChecked
+                    }
+                }
+            }
+            isCancelable = true
+            cancelButton {
+                it.dismiss()
+            }
+            okButton {
+                startSaved(game, showIdsCheck?.invoke() ?: true)
+                it.dismiss()
+            }
+            show()
+        }
+    }
+
+    private fun startSaved(info: GameInfo, showIds: Boolean) {
+        val wrappedState = if (showIds) {
+            with(info.state) {
+                val players = tableState.playersState.players.filter { it.alive }.map { it.player }
+                val phaseState = identificationState(players, this.phaseState, resourceManager)
+                copy(phaseState = phaseState)
+            }
+        } else {
+            info.state
+        }
+
+        startActivity(intentFor<BoardActivity>(
+            STATE_KEY to wrappedState.stringify()
+        ).singleTop())
+    }
+
 }

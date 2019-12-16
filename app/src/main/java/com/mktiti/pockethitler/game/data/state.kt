@@ -140,6 +140,10 @@ data class GameState(
 fun initNewState(players: List<String>, resourceManager: ResourceManager): GameState {
     val playerState = PlayerManager.randomSetup(players)
     val firstPresident = playerState.players.random().player
+
+    val players = playerState.players.map { it.player }
+    val startPhase = gameStartState(players, firstPresident)
+
     return GameState(
         tableState = TableState(
             playersState = playerState,
@@ -147,7 +151,7 @@ fun initNewState(players: List<String>, resourceManager: ResourceManager): GameS
             deckState = ArticleDeck.newDeck(),
             boardsState = BoardsState()
         ),
-        phaseState = startState(playerState.players.map { it.player }, resourceManager)
+        phaseState = identificationState(players, startPhase, resourceManager)
         // For testing
         // phaseState = PresidentDiscardState(Triple(Article.LIBERAL, Article.FASCIST, Article.LIBERAL))
     )

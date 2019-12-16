@@ -11,13 +11,17 @@ import com.mktiti.pockethitler.util.Tri
 import kotlinx.serialization.Polymorphic
 import kotlinx.serialization.Serializable
 
-fun startState(players: List<Player>, resourceManager: ResourceManager): PhaseState =
+fun gameStartState(players: List<Player>, firstPres: Player): PhaseState
+        = PhaseState.ChancellorSelectState(players - firstPres)
+
+fun identificationState(players: List<Player>, startState: PhaseState, resourceManager: ResourceManager): PhaseState =
     EnvelopeState(
         message = resourceManager.format(R.string.env_secret_id, players.first().name),
         nestedState = IdentityInfoState(
             identities = players,
             hitlerName = players.find { it.identity == HITLER }?.name!!,
-            fascistNames = players.filter { it.identity == FASCIST }.map { it.name }
+            fascistNames = players.filter { it.identity == FASCIST }.map { it.name },
+            startPhase = startState
         )
     )
 
@@ -34,7 +38,8 @@ sealed class PhaseState {
     data class IdentityInfoState(
         val identities: List<Player>,
         val hitlerName: String,
-        val fascistNames: List<String>
+        val fascistNames: List<String>,
+        @Polymorphic val startPhase: PhaseState
     ) : PhaseState()
 
     @Serializable

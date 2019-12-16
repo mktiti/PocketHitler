@@ -12,7 +12,8 @@
     <string name="president_peek">President peek cards</string>
     <string name="env_for_president">Only for President %1$s</string>
     <string name="switch_frag_view">Switch\nview</string>
-    <string name="start">Start</string>
+    <string name="start_new">Start new game</string>
+    <string name="start_saved">Continue saved game</string>
     <string name="remaining_cards">Remaining:</string>
     <string name="no_chancellor">No Chancellor</string>
     <string name="no_president">No President</string>
@@ -70,5 +71,16 @@
 
     <string name="lib_win_by_articles">Liberals win by playing 5 liberal articles!</string>
     <string name="lib_win_by_assassination">Liberals win by assassinating Hitler (%1$s)!</string>
+    <string name="name_hint">Name</string>
+    <string name="players_title">Players:</string>
+    <string name="start_players">Start</string>
+    <string name="new_game_setup_label">Setup new game</string>
+    <string name="saved_games">Saved games:</string>
+
+    <string name="player_count">%1$d players, %2$d dead</string>
+    <string name="player_count_no_dead">%1d players</string>
+    <string name="open_saved">Resume saved game</string>
+    <string name="show_identities">Show secret identities</string>
+    <string name="player_dead">%1$s (dead)</string>
 
 </resources>

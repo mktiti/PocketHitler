@@ -8,8 +8,6 @@ sealed class PhaseResult {
         val nestedPhase: PhaseState
     ) : PhaseResult()
 
-    object IdentificationDone : PhaseResult()
-
     data class CandidatesSelected(
         val chancellor: Player
     ) : PhaseResult()

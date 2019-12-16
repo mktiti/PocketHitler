@@ -43,7 +43,8 @@ class StateSerializationTest {
                 phaseState = PhaseState.IdentityInfoState(
                     identities = testPlayers,
                     fascistNames = (0..5).map { "Fash #$it" },
-                    hitlerName = "Hitler name"
+                    hitlerName = "Hitler name",
+                    startPhase = PhaseState.ChancellorSelectState(testPlayers)
                 )
             )
         )

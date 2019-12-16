@@ -5,7 +5,6 @@ import android.view.*
 import androidx.fragment.app.Fragment
 import com.mktiti.pockethitler.R
 import com.mktiti.pockethitler.game.data.PhaseResult
-import com.mktiti.pockethitler.game.data.PhaseResult.IdentificationDone
 import com.mktiti.pockethitler.game.data.PhaseResult.PlainStateResult
 import com.mktiti.pockethitler.game.data.PhaseState.EnvelopeState
 import com.mktiti.pockethitler.game.data.PhaseState.IdentityInfoState
@@ -62,7 +61,7 @@ class IdentityFragment(
                 val restPlayers = state.identities.drop(1)
                 resultCallback(
                     if (restPlayers.isEmpty()) {
-                        IdentificationDone
+                        PlainStateResult(state.startPhase)
                     } else {
                         PlainStateResult(
                             EnvelopeState(

@@ -51,8 +51,6 @@ class GameEngine(
         phaseState = when (result) {
             is PlainStateResult -> result.nestedPhase
 
-            is IdentificationDone -> ChancellorSelectState(electionManager.possibleChancellors())
-
             is CandidatesSelected -> EnvelopeState(
                 message = resourceManager.format(R.string.env_general, playerManager.livingPlayers.first().name),
                 nestedState = VoteState(
