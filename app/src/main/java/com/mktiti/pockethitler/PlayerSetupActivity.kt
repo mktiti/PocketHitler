@@ -18,6 +18,8 @@ import com.mktiti.pockethitler.game.data.initNewState
 import com.mktiti.pockethitler.util.DefaultResourceManager
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 private class PlayerView : AnkoComponent<ViewGroup> {
@@ -166,6 +168,7 @@ class PlayerSetupActivity : AppCompatActivity() {
                     setOnClickListener {
 
                         val intent = intentFor<BoardActivity>(
+                            ID_KEY to LocalDateTime.now().atOffset(ZoneOffset.UTC).toInstant().toEpochMilli(),
                             STATE_KEY to initNewState(playerAdapter.state(), DefaultResourceManager(resources)).stringify()
                         ).apply {
                             flags = Intent.FLAG_ACTIVITY_TASK_ON_HOME or Intent.FLAG_ACTIVITY_NEW_TASK

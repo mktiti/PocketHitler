@@ -1,6 +1,7 @@
 package com.mktiti.pockethitler
 
 import android.content.Context
+import android.graphics.Rect
 import android.graphics.Typeface
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
@@ -9,18 +10,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.marginTop
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.mktiti.pockethitler.game.data.GameInfo
 import com.mktiti.pockethitler.game.data.identificationState
-import com.mktiti.pockethitler.game.data.initNewState
 import com.mktiti.pockethitler.util.DefaultResourceManager
+import com.mktiti.pockethitler.util.FileGameStore
 import com.mktiti.pockethitler.util.ResourceManager
 import org.jetbrains.anko.*
 import org.jetbrains.anko.recyclerview.v7.recyclerView
+import java.time.Instant
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZoneOffset
-import java.util.*
 
 private class GameView : AnkoComponent<ViewGroup> {
 
@@ -96,7 +99,8 @@ private class GameAdapter(
         holder.apply {
             dateView.text = DateUtils.getRelativeDateTimeString(
                 context,
-                game.creationDate.toInstant(ZoneOffset.UTC).toEpochMilli(),
+                LocalDateTime.ofInstant(Instant.ofEpochMilli(game.creationDate), ZoneOffset.UTC).atZone(
+                    ZoneId.systemDefault()).toInstant().toEpochMilli(),
                 DateUtils.MINUTE_IN_MILLIS,
                 DateUtils.WEEK_IN_MILLIS,
                 0
@@ -132,15 +136,7 @@ class StartActivity : AppCompatActivity() {
         resourceManager = DefaultResourceManager(resources)
 
         gameAdapter = GameAdapter(
-            games = listOf(
-                GameInfo(
-                    state = initNewState(
-                        players = listOf("Titi", "Kriszu", "Krisztián", "Chris", "Szőlősi"),
-                        resourceManager = resourceManager
-                    ),
-                    creationDate = LocalDateTime.now(ZoneOffset.UTC).minusHours(Random().nextInt(30).toLong())
-                )
-            ),
+            games = emptyList(),
             onItemClick = this::onSavedOpen,
             resourceManager = resourceManager,
             context = this
@@ -164,12 +160,24 @@ class StartActivity : AppCompatActivity() {
             savedView = recyclerView {
                 layoutManager = LinearLayoutManager(context)
                 adapter = gameAdapter
+
+                addItemDecoration(object : RecyclerView.ItemDecoration() {
+                    override fun getItemOffsets(outRect: Rect, view: View,  parent: RecyclerView, state: RecyclerView.State) {
+                        with(outRect) {
+                            if (parent.getChildAdapterPosition(view) != 0) {
+                                top = 20
+                            }
+                        }
+                    }
+                })
             }.lparams(width = matchParent, height = matchParent)
         }
     }
 
     override fun onResume() {
         super.onResume()
+
+        gameAdapter.setGames(FileGameStore(this).loadGames())
     }
 
     private fun onSavedOpen(gameView: View) {
@@ -226,6 +234,7 @@ class StartActivity : AppCompatActivity() {
         }
 
         startActivity(intentFor<BoardActivity>(
+            ID_KEY to info.creationDate,
             STATE_KEY to wrappedState.stringify()
         ).singleTop())
     }

@@ -137,8 +137,8 @@ data class GameState(
 
 }
 
-fun initNewState(players: List<String>, resourceManager: ResourceManager): GameState {
-    val playerState = PlayerManager.randomSetup(players)
+fun initNewState(playerNames: List<String>, resourceManager: ResourceManager): GameState {
+    val playerState = PlayerManager.randomSetup(playerNames)
     val firstPresident = playerState.players.random().player
 
     val players = playerState.players.map { it.player }

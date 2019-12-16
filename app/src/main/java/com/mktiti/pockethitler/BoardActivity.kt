@@ -9,15 +9,20 @@ import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
+import com.mktiti.pockethitler.game.data.GameInfo
 import com.mktiti.pockethitler.game.data.GameState
+import com.mktiti.pockethitler.game.data.PhaseState
 import com.mktiti.pockethitler.game.data.TableState
 import com.mktiti.pockethitler.game.manager.FascistBoard
 import com.mktiti.pockethitler.game.manager.GameEngine
 import com.mktiti.pockethitler.game.manager.PlayerCount
 import com.mktiti.pockethitler.util.DefaultResourceManager
+import com.mktiti.pockethitler.util.FileGameStore
 import com.mktiti.pockethitler.view.board.BoardFragment
 import org.jetbrains.anko.*
+import java.time.LocalDateTime
 
+const val ID_KEY = "game-creation"
 const val STATE_KEY = "game-state"
 private const val DYN_FRAG_TAG = "dynamic-fragment"
 
@@ -32,6 +37,8 @@ class BoardActivity : AppCompatActivity() {
     private var boardShown = true
 
     private lateinit var engine: GameEngine
+
+    private var gameTimeId: Long = -1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +69,10 @@ class BoardActivity : AppCompatActivity() {
         val stateJson = savedInstanceState?.getString(STATE_KEY) ?:
                     intent.extras?.getString(STATE_KEY) ?:
                     throw IllegalArgumentException("Game state missing!")
+
+        gameTimeId = savedInstanceState?.getLong(ID_KEY) ?:
+                    intent.extras?.getLong(ID_KEY) ?:
+                    throw IllegalArgumentException("Game id missing!")
 
         val state = GameState.parse(stateJson)
         engine = GameEngine(
@@ -121,6 +132,22 @@ class BoardActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle, outPersistentState: PersistableBundle) {
         super.onSaveInstanceState(outState, outPersistentState)
+
+        outState.putLong(ID_KEY, gameTimeId)
         outState.putString(STATE_KEY, engine.currentState().stringify())
     }
+
+    override fun onPause() {
+        val state = engine.currentState()
+        val ps = state.phaseState
+        val saveState = when {
+            ps is PhaseState.IdentityInfoState -> ps.startPhase
+            ps is PhaseState.EnvelopeState && ps.nestedState is PhaseState.IdentityInfoState -> ps.nestedState.startPhase
+            else -> ps
+        }
+
+        FileGameStore(this).saveGame(gameTimeId, state.copy(phaseState = saveState))
+        super.onPause()
+    }
+
 }
